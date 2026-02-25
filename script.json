@@ -1,0 +1,9 @@
+const callButton = document.querySelector('.call-btn');
+
+if (callButton) {
+    callButton.addEventListener('click', () => {
+        window.location.href = 'tel:08036761616';
+    });
+} else {
+    console.warn('Call button not found');
+}
