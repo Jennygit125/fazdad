@@ -3,41 +3,52 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="FAZDAD Logistics - End-to-end logistics services for smooth and efficient goods movement.">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>FAZDAD LOGISTICS</title>
         <link rel="stylesheet" href="style.css">
-          <script src=\"script.js\" defer></script>
     </head>
     <body>
-        <div class="hero">
-            <div class="hero-top">
-                <div class="truck-left">
-                    <div class="image-container">
-                        <img src="Truck1.jpg" alt="Red logistics truck carrying cargo on the road" loading="lazy">
-                    </div>
+        <header class="site-header">
+        <div class="logo-container">
+    <a href="home.html" aria-label="Fazdad Logistics Home" id="logo-placeholder">
+        </a>
+</div>
+<div class="navigation">
+        <a href="about.html" aria-label="About Us">
+            about </a>
+            <nav>...</nav>
+</div>
+  
+</header>
+        <div class="container">
+            <div id="text-left">
+                    <h1>FAZDAD LOGISTICS RESOURCES<br></h1><br>
+                    We provide end-to-end logistics services to ensure smooth and efficient movement of your goods, from pickup to final delivery.
                 </div>
-                <div class="hero-right">
-                    <h1>FAZDAD<br>LOGISTICS<br>RESOURCES</h1>
-                    <p>We provide end-to-end logistics services to ensure smooth and efficient movement of your goods, from pickup to final delivery.</p>
+                <div id="login-Container">
+                    <h2>FAZDAD LOGISTICS</h2>
+                   <div class="forms-container">
+                    <button type="button" id="loginFormButton">Login</button>
+                    <button type="button" id="registerFormButton">Register</button>
+                   </div>
+                    <form id="loginForm">
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        Remember Me
+                        <br>
+                        <button type="submit">Login</button>
+                        <button type="button" id="forgotPassword">Forgot Password?</button>
+                    </form>
+                    <form id="registerForm">
+                        <input type="text" id="registerUsername" name="registerUsername" placeholder="Username" required>
+                        <input type="password" id="registerPassword" name="registerPassword" placeholder="Password" required>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                        <button type="submit">Register</button>
+                    </form>
                 </div>
-            </div>
-            <div class="hero-bottom">
-                <div class="hero-left">
-                    <button class="call-btn">CALL NOW</button>
-                    <div class="phone-info">
-                        <span class="phone-icon">📞</span>
-                        <span class="phone-number">08036761616</span>
-                    </div>
-                    <div class="decorative-arrows">>>> </div>
-                </div>
-                <div class="truck-right">
-                    <div class="image-container">
-                        <img src="Truck2.jpg" alt="Red logistics truck carrying cargo on the road" loading="lazy">
-                    </div>
-                </div>
-            </div>
         </div>
-        <script src=\"script.js\" defer></script>
+        <footer>contact us at info@fazdad.com</footer>
+        <script src="script.js" defer></script>
     </body>
 </html>
