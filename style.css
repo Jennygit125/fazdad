@@ -315,7 +315,7 @@ body {
 }
 
 .footer-section h4 {
-    color: #00AEEF; /* Your bright accent blue for the headings */
+    color: #00AEEF; 
     margin-bottom: 20px;
     font-size: 1.2rem;
     text-transform: uppercase;
@@ -353,4 +353,51 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.2); 
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.6);
+}
+/* MOBILE STYLES */
+@media (max-width: 768px) {
+    .site-header {
+        flex-direction: column;
+        padding: 10px;
+        height: auto;
+    }
+
+    .navigation {
+        margin-left: 0;
+        margin-top: 10px;
+        gap: 15px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .navigation a {
+        font-size: 0.8rem;
+    }
+
+    body {
+        padding-top: 120px; 
+    }
+
+    #article-container {
+        margin-top: 20px;
+        width: 100%;
+        height: auto;
+    }
+
+    .site-footer {
+        position: relative; 
+        padding: 40px 20px;
+        background-color: #1513a3; 
+    }
+
+    .footer-content {
+        flex-direction: column; 
+        text-align: left; 
+        gap: 30px;
+    }
+
+    .info-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
