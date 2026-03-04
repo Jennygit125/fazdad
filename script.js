@@ -8,11 +8,33 @@ const logoHTML = `
     <text x="60" y="48" font-family="Arial, sans-serif" font-size="12" fill="#00AEEF" letter-spacing="1">LOGISTICS</text>
 </svg>
 `;
-
-// Function to "Input" the logo into the page
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', () => {
     const logoContainer = document.getElementById('logo-placeholder');
-    if (logoContainer) {
-        logoContainer.innerHTML = logoHTML;
+    if (logoContainer) logoContainer.innerHTML = logoHTML;
+
+    const loginButtonForm = document.getElementById('loginFormButton');
+    const registerButtonForm = document.getElementById('registerFormButton');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    if (loginButtonForm && registerButtonForm && loginForm && registerForm) {
+    const switchToLogin = () => {
+        loginForm.style.display = "flex";
+        registerForm.style.display = "none";
+        loginButtonForm.style.backgroundColor = "#1513a3"; 
+        registerButtonForm.style.backgroundColor = "transparent";
+    };
+    
+    const switchToReg = () => {
+        loginForm.style.display = "none";
+        registerForm.style.display = "flex";
+        registerButtonForm.style.backgroundColor = "#1513a3";
+        loginButtonForm.style.backgroundColor = "transparent";
+    };
+       loginButtonForm.addEventListener('click', switchToLogin);
+        registerButtonForm.addEventListener('click', switchToReg);
     }
-};
+    else{
+        console.log("Form elements not found on this page. Skipping form logic.");
+    }
+    }
+);
