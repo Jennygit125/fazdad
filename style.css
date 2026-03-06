@@ -401,3 +401,192 @@ body {
         margin-bottom: 20px;
     }
 }
+/* ---Service --- */
+.modern-services {
+    padding-top: 20px;
+}
+.service-body {
+    background-color: whitesmoke;
+    color: black;
+    text-shadow:  0 0 10px #fff, 0 0 20px #d1cbd0;
+}
+.services-hero {
+    height: 300px;
+    background:
+    linear-gradient(rgba(21,19,163,0.8),rgba(0,174,239,0.6)),url('https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    margin-bottom: 60px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+}
+
+.service-row-v2 {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    margin-bottom: 100px;
+}
+
+.service-row-v2.reverse {
+    flex-direction: row-reverse;
+}
+
+.service-content {
+    flex: 1;
+}
+
+.service-tag {
+    color: #00AEEF;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+}
+
+.service-content h2 {
+    color: #1513a3;
+    font-size: 2.5rem;
+    margin: 10px 0;
+}
+
+.service-features li {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    margin-left: 13px;
+    color: #1f1e1e;
+}
+
+.service-features li strong {
+    color: #1513a3; 
+}
+
+/* Secondary Button Styling */
+.secondary-btn {
+    background-color: transparent !important;
+    border: 2px solid #00AEEF !important;
+    color: #00AEEF !important;
+    padding: 12px 28px !important;
+    margin-top: 20px;
+}
+
+.secondary-btn:hover {
+    background-color: #00AEEF !important;
+    color: white !important;
+}
+
+/* Enhancing the tags */
+.service-tag {
+    display: inline-block;
+    background: rgba(0, 174, 239, 0.1);
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 15px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    -ms-border-radius: 50px;
+    -o-border-radius: 50px;
+}
+
+
+.service-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #00AEEF;
+    font-weight: bold;
+}
+
+.service-visual {
+    flex: 1;
+    position: relative;
+}
+
+.service-visual img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    transition: transform 0.4s ease;
+    -webkit-transition: transform 0.4s ease;
+    -moz-transition: transform 0.4s ease;
+    -ms-transition: transform 0.4s ease;
+    -o-transition: transform 0.4s ease;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+.service-visual:hover img {
+    transform: scale(1.02) translateY(-10px);
+    -webkit-transform: scale(1.02) translateY(-10px);
+    -moz-transform: scale(1.02) translateY(-10px);
+    -ms-transform: scale(1.02) translateY(-10px);
+    -o-transform: scale(1.02) translateY(-10px);
+}
+/* Initial hidden state for the service rows */
+.service-row-v2 {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+    -webkit-transition: all 0.8s ease-out;
+    -moz-transition: all 0.8s ease-out;
+    -ms-transition: all 0.8s ease-out;
+    -o-transition: all 0.8s ease-out;
+    -webkit-transform: translateY(30px);
+    -moz-transform: translateY(30px);
+    -ms-transform: translateY(30px);
+    -o-transform: translateY(30px);
+}
+
+/* State when the row comes into view */
+.service-row-v2.appear {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+}
+
+/* Optional: Make the images slide in from the sides */
+.service-visual {
+    overflow: hidden;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+.service-visual img {
+    transform: scale(1.1);
+    transition: transform 1.2s ease-out;
+}
+
+.service-row-v2.appear .service-visual img {
+    transform: scale(1);
+}
+/* Mobile Responsiveness */
+@media (max-width: 850px) {
+    .service-row-v2, .service-row-v2.reverse {
+        flex-direction: column;
+        text-align: center;
+    }
+    .service-features li {
+        padding-left: 0;
+    }
+    .service-features li::before {
+        display: none;
+    }
+}

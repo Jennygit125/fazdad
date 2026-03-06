@@ -1,0 +1,89 @@
+.dashboard-body {
+    background-color: #f4f7f9;
+    color: #333;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.dash-sidebar {
+    width: 260px;
+    background-color: #1513a3;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-nav {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dash-nav a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.dash-nav a.active, .dash-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Tracking Stepper Logic */
+.tracking-stepper {
+    display: flex;
+    justify-content: space-between;
+    margin: 40px 0;
+    position: relative;
+}
+
+.tracking-stepper::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    width: 90%;
+    height: 4px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.step {
+    z-index: 2;
+    text-align: center;
+    width: 100px;
+}
+
+.step .circle {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 4px solid #e0e0e0;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.step.completed .circle {
+    border-color: #00AEEF;
+    color: #00AEEF;
+}
+
+.step.active .circle {
+    border-color: #00AEEF;
+    background: #00AEEF;
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 174, 239, 0.5);
+}

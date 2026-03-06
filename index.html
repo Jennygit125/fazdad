@@ -1,56 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>FAZDAD LOGISTICS</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <header class="site-header">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home | Fazdad Logistics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="site-header">
         <div class="logo-container">
-    <a href="home.html" aria-label="Fazdad Logistics Home" id="logo-placeholder">
-        </a>
-</div>
-<div class="navigation">
-        <a href="about.html" aria-label="About Us">
-            about </a>
-            <nav>...</nav>
-</div>
-  
-</header>
-        <div class="container">
-            <div id="text-left">
-                    <h1>FAZDAD LOGISTICS RESOURCES<br></h1><br>
-                    We provide end-to-end logistics services to ensure smooth and efficient movement of your goods, from pickup to final delivery.
-                </div>
-                <div id="login-Container">
-                    <h2>FAZDAD LOGISTICS</h2>
-                   <div class="forms-container">
-                    <button type="button" id="loginFormButton">Login</button>
-                    <button type="button" id="registerFormButton">Register</button>
-                   </div>
-                    <form id="loginForm">
-                        <input type="text" class="Username" name="username" placeholder="Username" required>
-                        <input type="password" class="Password" name="password" placeholder="Password" required>
-                       <div class="checkbox">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
-                        <button type="button" id="forgotPassword">Forgot Password</button>
-                        </div>
-                        <button type="submit" id="login">Login</button>
-                        
-                    </form>
-                    <form id="registerForm">
-                        <input type="text" class="Username" name="SetUsername" placeholder="Set Username" required>
-                        <input type="password" class="Password" name="SetPassword" placeholder="Set Password" required>
-                        <input type="password" class="Password" name="confirmPassword" placeholder="Confirm Password" required>
-                        <button id="register" type="submit">Register</button>
-                    </form>
-                </div>
+            <a href="index.html" aria-label="Fazdad Logistics Home" id="logo-placeholder"></a>
         </div>
-        <footer>contact us at info@fazdad.com</footer>
-        <script src="script.js" defer></script>
-    </body>
+        <nav class="navigation">
+            <a href="index.html" class="active">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="login.html">Login</a> 
+        </nav>
+    </header>
+
+    <div id="article-container">
+        
+        <section class="intro-card">
+            <h1 style="color: #1513a3; margin-bottom: 10px;">Move Your Business Forward</h1>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">
+                End-to-end global and local logistics resources built for speed, transparency, and reliability.
+            </p>
+            
+            <button class="call-btn" style="background-color: #00AEEF; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                Call Dispatch Now
+            </button>
+        </section>
+
+        <div class="cards-grid">
+            <div class="info-card">
+                <h3>Global Shipping</h3>
+                <p>Air, sea, and land transport options customized to your timeline and budget.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Secure Warehousing</h3>
+                <p>Temperature-controlled, fully monitored facilities to protect your assets before transit.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Smart Tracking</h3>
+                <p>Always know exactly where your cargo is with our state-of-the-art monitoring systems.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Fazdad Logistics</h4>
+                <p>Your end-to-end logistics resource partner.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>Email: <a href="mailto:info@fazdad.com">info@fazdad.com</a></p>
+                <p>Support: 24/7 Dispatch Available</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <nav class="footer-nav">
+                    <a href="index.html">Home</a>
+                    <a href="services.html">Services</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                </nav>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Fazdad Logistics Resources. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
 </html>

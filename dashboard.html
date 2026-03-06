@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | Fazdad Logistics</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard-style.css"> </head>
+<body class="dashboard-body">
+
+    <div class="dashboard-wrapper">
+        <aside class="dash-sidebar">
+            <div id="logo-placeholder"></div> <nav class="dash-nav">
+                <a href="#" class="active">📦 My Shipments</a>
+                <a href="#">📍 Live Map</a>
+                <a href="#">📄 Documents</a>
+                <a href="#">⚙️ Settings</a>
+                <hr>
+                <a href="index.html" class="logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dash-content">
+            <header class="dash-header">
+                <h2>Welcome Back, <span id="user-name">Guest</span></h2>
+                <div class="user-profile">
+                    <div class="status-indicator">Online</div>
+                </div>
+            </header>
+
+            <section class="tracking-card">
+                <div class="card-header">
+                    <div>
+                        <span class="label">Shipment ID:</span>
+                        <strong>#FZ-99283-TX</strong>
+                    </div>
+                    <span class="badge">In Transit</span>
+                </div>
+
+                <div class="tracking-stepper">
+                    <div class="step completed">
+                        <div class="circle">✓</div>
+                        <span>Picked Up</span>
+                    </div>
+                    <div class="step active">
+                        <div class="circle">🚚</div>
+                        <span>In Transit</span>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <span>Out for Delivery</span>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <span>Delivered</span>
+                    </div>
+                </div>
+
+                <div class="shipment-info-grid">
+                    <div class="info-box">
+                        <p>Origin</p>
+                        <strong>Lagos, NG</strong>
+                    </div>
+                    <div class="info-box">
+                        <p>Destination</p>
+                        <strong>Houston, TX</strong>
+                    </div>
+                    <div class="info-box">
+                        <p>Est. Delivery</p>
+                        <strong>Oct 24, 2026</strong>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
