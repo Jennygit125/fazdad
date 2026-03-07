@@ -13,11 +13,12 @@
     <a href="index.html" aria-label="Fazdad Logistics Home" id="logo-placeholder">
         </a>
 </div>
-<div class="navigation">
-        <a href="about.html" aria-label="About Us">
-            about </a>
-            <nav>...</nav>
-</div>
+<selector class="navigation">
+        <a href="index.html">Home</a>
+            <a href="about.html" class="active">About</a>
+            <a href="services.html">Services</a>
+            <a href="login.html">login</a>
+</selector>
   
 </header>
         <div class="container">
@@ -26,7 +27,7 @@
                     We provide end-to-end logistics services to ensure smooth and efficient movement of your goods, from pickup to final delivery.
                 </div>
                 <div id="login-Container">
-                    <h2>FAZDAD LOGISTICS</h2>
+                    <h2 class="overlay-text">FAZDAD LOGISTICS</h2>
                    <div class="forms-container">
                     <button type="button" id="loginFormButton">Login</button>
                     <button type="button" id="registerFormButton">Register</button>
@@ -36,7 +37,7 @@
                         <input type="password" class="Password" name="password" placeholder="Password" required>
                        <div class="checkbox">
                         <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
+                        <label for="rememberMe" class="overlay-text">Remember Me</label>
                         <button type="button" id="forgotPassword">Forgot Password</button>
                         </div>
                         <button type="submit" id="login">Login</button>
