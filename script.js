@@ -24,5 +24,5 @@ document.addEventListener('DOMContentLoaded', () => {
         lB.onclick = () => t(1);
         rB.onclick = () => t(0);
     }
-    q('.call-btn').forEach(b => b.onclick = () => location.href = 'tel:08036761616');
+    q('.call-btn').forEach(b => b.onclick = () => location.href = 'tel:08111321606');
 });
