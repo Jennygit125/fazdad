@@ -140,6 +140,20 @@ body {
 
 #registerForm { display: none; }
 
+.auth-message {
+    min-height: 1.4rem;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 1rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.auth-message.success { color: #7fffc2; }
+.auth-message.error { color: #ff8f8f; }
+.auth-message.info { color: #cceeff; }
+
 .Username, .Password {
     width: 100%;
     background: rgba(255, 255, 255, 0.05);
