@@ -58,12 +58,29 @@ function writeJson(storage, key, value) {
 }
 
 function getStoredUsers() {
-    const users = readJson(localStorage, AUTH_STORAGE.USERS, []);
-    return Array.isArray(users) ? users : [];
+    const hasSessionUsers = sessionStorage.getItem(AUTH_STORAGE.USERS) !== null;
+    if (hasSessionUsers) {
+        const users = readJson(sessionStorage, AUTH_STORAGE.USERS, []);
+        return Array.isArray(users) ? users : [];
+    }
+
+    // Migrate legacy account data out of localStorage once.
+    const hasLegacyUsers = localStorage.getItem(AUTH_STORAGE.USERS) !== null;
+    if (!hasLegacyUsers) return [];
+
+    const legacyUsers = readJson(localStorage, AUTH_STORAGE.USERS, []);
+    if (Array.isArray(legacyUsers)) {
+        writeJson(sessionStorage, AUTH_STORAGE.USERS, legacyUsers);
+        localStorage.removeItem(AUTH_STORAGE.USERS);
+        return legacyUsers;
+    }
+    localStorage.removeItem(AUTH_STORAGE.USERS);
+    return [];
 }
 
 function saveUsers(users) {
-    writeJson(localStorage, AUTH_STORAGE.USERS, users);
+    writeJson(sessionStorage, AUTH_STORAGE.USERS, users);
+    localStorage.removeItem(AUTH_STORAGE.USERS);
 }
 
 async function hashPassword(password, salt, iterations = HASH_ITERATIONS) {
@@ -140,26 +157,26 @@ function clearSession() {
 }
 
 function saveSession(sessionData, rememberMe) {
+    void rememberMe;
     clearSession();
-    const storage = rememberMe ? localStorage : sessionStorage;
-    writeJson(storage, AUTH_STORAGE.SESSION, sessionData);
+    writeJson(sessionStorage, AUTH_STORAGE.SESSION, sessionData);
 }
 
 function getSession() {
-    const stores = [sessionStorage, localStorage];
-    for (let i = 0; i < stores.length; i += 1) {
-        const store = stores[i];
-        const session = readJson(store, AUTH_STORAGE.SESSION, null);
-        if (!session) continue;
-
-        const expiresAt = Date.parse(session.expiresAt || "");
-        if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
-            store.removeItem(AUTH_STORAGE.SESSION);
-            continue;
-        }
-        return session;
+    const session = readJson(sessionStorage, AUTH_STORAGE.SESSION, null);
+    if (!session) {
+        localStorage.removeItem(AUTH_STORAGE.SESSION);
+        return null;
     }
-    return null;
+
+    const expiresAt = Date.parse(session.expiresAt || "");
+    if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+        clearSession();
+        return null;
+    }
+
+    localStorage.removeItem(AUTH_STORAGE.SESSION);
+    return session;
 }
 
 function setAuthMessage(element, message, type) {
@@ -177,8 +194,10 @@ function getFormFieldValue(form, fieldName) {
 
 function setupLogo(getById) {
     const logo = `<svg class="header-logo" width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg"><path d="M15 45V20c0-5 3-8 7-8h6m-13 16h13" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M42 45V20c0-5-3-8-7-8-5 0-8 3-8 8v25m0-8h15" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M38 30l8-8-8-8" stroke="#00AEEF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="32" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="#1513a3">Fazdad</text><text x="60" y="48" font-family="Arial,sans-serif" font-size="12" fill="#00AEEF" letter-spacing="1">LOGISTICS</text></svg>`;
-    const placeholder = getById("logo-placeholder");
-    if (placeholder) placeholder.innerHTML = logo;
+    const headerPlaceholder = getById("logo-placeholder");
+    const sidebarPlaceholder = getById("sidebar-logo-placeholder");
+    if (headerPlaceholder) headerPlaceholder.innerHTML = logo;
+    if (sidebarPlaceholder) sidebarPlaceholder.innerHTML = logo;
 }
 
 function setupServiceAnimation(queryAll) {
