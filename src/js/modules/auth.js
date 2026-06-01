@@ -83,7 +83,8 @@ class AuthModule {
 
         try {
             // Call backend signUp endpoint
-            const endpoints = apiClient.endpoints || {};
+            // Use an extremely defensive check to ensure endpoints.AUTH exists
+            const endpoints = apiClient.endpoints || { AUTH: {} };
             const endpoint = (endpoints.AUTH && endpoints.AUTH.SIGN_UP) ? endpoints.AUTH.SIGN_UP : '/signUp';
             console.log(`Attempting registration at: ${apiClient.baseUrl}${endpoint}`);
             const response = await apiClient.post(endpoint, {
@@ -118,7 +119,7 @@ class AuthModule {
         try {
             // Call backend signIn endpoint
             // Defensive check: ensure AUTH object exists before accessing SIGN_IN
-            const endpoints = apiClient.endpoints || {};
+            const endpoints = apiClient.endpoints || { AUTH: {} };
             const endpoint = (endpoints.AUTH && endpoints.AUTH.SIGN_IN) ? endpoints.AUTH.SIGN_IN : '/signIn';
             const response = await apiClient.post(endpoint, {
                 email: email.toLowerCase(),

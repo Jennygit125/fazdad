@@ -11,13 +11,33 @@ class ApiClient {
         const rawUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
         // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
         this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
-        // Increase timeout to 60s to handle Render cold starts
+        // Increase timeout to 60s to handle Render's free tier "cold starts"
         this.timeout = config?.TIMEOUT || 60000;
-        // Robust initialization to prevent "Cannot read properties of undefined (reading 'AUTH')"
-        this.endpoints = (config && config.ENDPOINTS) ? config.ENDPOINTS : { 
-            AUTH: { SIGN_IN: '/signIn', SIGN_UP: '/signUp' }, 
-            USERS: {}, 
-            REPORTS: {} 
+        
+        // Hardcoded defaults ensure the app never crashes if the config file is missing/empty
+        const defaultEndpoints = {
+            AUTH: {
+                SIGN_IN: '/signIn',
+                SIGN_UP: '/signUp',
+            },
+            USERS: {
+                PROFILE: '/user/profile',
+                GET_ALL: '/admin/getAllUsers',
+                DELETE: '/admin/user/:id',
+                LOCK: '/user/:id/lock',
+                PROMOTE: '/admin/promote/:id',
+            },
+            REPORTS: {
+                GET_MODERATOR: '/moderator/reports',
+                GET_ADMIN: '/admin/reports',
+                CREATE: '/moderator/reports',
+            }
+        };
+
+        // Merge provided config with defaults
+        this.endpoints = {
+            ...defaultEndpoints,
+            ...(config?.ENDPOINTS || {})
         };
     }
 
