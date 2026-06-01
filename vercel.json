@@ -1,7 +1,6 @@
 {
   "buildCommand": "npm install --include=dev && npm run build",
   "outputDirectory": "dist",
-  "framework": "static",
   "cleanUrls": true,
   "trailingSlash": false
 }
