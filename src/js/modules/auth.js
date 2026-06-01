@@ -84,7 +84,8 @@ class AuthModule {
 
         try {
             // Call backend signUp endpoint
-            const response = await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.SIGN_UP, {
+            const endpoint = apiClient.endpoints?.AUTH?.SIGN_UP || '/signUp';
+            const response = await apiClient.post(endpoint, {
                 firstName,
                 lastName,
                 email: email.toLowerCase(),
@@ -115,7 +116,8 @@ class AuthModule {
 
         try {
             // Call backend signIn endpoint
-            const response = await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.SIGN_IN, {
+            const endpoint = apiClient.endpoints?.AUTH?.SIGN_IN || '/signIn';
+            const response = await apiClient.post(endpoint, {
                 email: email.toLowerCase(),
                 password,
             });

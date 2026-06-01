@@ -8,9 +8,9 @@ const API_CONFIG = require('../../../config/api.config');
 class ApiClient {
     constructor(config = API_CONFIG) {
         // Prioritize Webpack-injected environment variable for Vercel compatibility
-        this.baseUrl = process.env.API_BASE_URL || config.BASE_URL;
-        this.timeout = config.TIMEOUT;
-        this.endpoints = config.ENDPOINTS;
+        this.baseUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
+        this.timeout = config?.TIMEOUT || 30000;
+        this.endpoints = config?.ENDPOINTS || {};
     }
 
     /**
