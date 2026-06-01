@@ -4,7 +4,6 @@
  */
 
 const apiClient = require('./client');
-const API_CONFIG = require('../../../config/api.config');
 
 class PublicService {
     /**
@@ -13,7 +12,8 @@ class PublicService {
      */
     static async getPublicMessage() {
         try {
-            return await apiClient.get(API_CONFIG.ENDPOINTS.AUTH.PUBLIC_MESSAGE);
+            const endpoint = apiClient.endpoints?.AUTH?.PUBLIC_MESSAGE || '/public/message';
+            return await apiClient.get(endpoint);
         } catch (error) {
             console.error('Failed to fetch public message:', error);
             throw error;

@@ -6,7 +6,6 @@
  */
 
 const apiClient = require('../api/client');
-const API_CONFIG = require('../../config/api.config');
 
 class ShipmentService {
     /**
@@ -14,10 +13,11 @@ class ShipmentService {
      */
     static async getAll(filters = {}) {
         try {
+            const baseEndpoint = apiClient.endpoints?.SHIPMENTS?.LIST || '/shipments';
             const queryString = new URLSearchParams(filters).toString();
             const url = queryString 
-                ? `${API_CONFIG.ENDPOINTS.SHIPMENTS.LIST}?${queryString}`
-                : API_CONFIG.ENDPOINTS.SHIPMENTS.LIST;
+                ? `${baseEndpoint}?${queryString}`
+                : baseEndpoint;
             
             return await apiClient.get(url);
         } catch (error) {
@@ -33,7 +33,8 @@ class ShipmentService {
         if (!id) throw new Error('Shipment ID is required');
         
         try {
-            const url = API_CONFIG.ENDPOINTS.SHIPMENTS.GET.replace(':id', id);
+            const template = apiClient.endpoints?.SHIPMENTS?.GET || '/shipments/:id';
+            const url = template.replace(':id', id);
             return await apiClient.get(url);
         } catch (error) {
             console.error(`Failed to fetch shipment ${id}:`, error);
@@ -48,8 +49,9 @@ class ShipmentService {
         if (!shipmentData) throw new Error('Shipment data is required');
         
         try {
+            const endpoint = apiClient.endpoints?.SHIPMENTS?.CREATE || '/shipments';
             return await apiClient.post(
-                API_CONFIG.ENDPOINTS.SHIPMENTS.CREATE,
+                endpoint,
                 shipmentData
             );
         } catch (error) {
@@ -66,7 +68,8 @@ class ShipmentService {
         if (!shipmentData) throw new Error('Shipment data is required');
         
         try {
-            const url = API_CONFIG.ENDPOINTS.SHIPMENTS.UPDATE.replace(':id', id);
+            const template = apiClient.endpoints?.SHIPMENTS?.UPDATE || '/shipments/:id';
+            const url = template.replace(':id', id);
             return await apiClient.put(url, shipmentData);
         } catch (error) {
             console.error(`Failed to update shipment ${id}:`, error);
@@ -81,7 +84,8 @@ class ShipmentService {
         if (!id) throw new Error('Shipment ID is required');
         
         try {
-            const url = API_CONFIG.ENDPOINTS.SHIPMENTS.DELETE.replace(':id', id);
+            const template = apiClient.endpoints?.SHIPMENTS?.DELETE || '/shipments/:id';
+            const url = template.replace(':id', id);
             return await apiClient.delete(url);
         } catch (error) {
             console.error(`Failed to delete shipment ${id}:`, error);
@@ -96,7 +100,8 @@ class ShipmentService {
         if (!id) throw new Error('Shipment ID is required');
         
         try {
-            const url = API_CONFIG.ENDPOINTS.SHIPMENTS.TRACK.replace(':id', id);
+            const template = apiClient.endpoints?.SHIPMENTS?.TRACK || '/shipments/:id/track';
+            const url = template.replace(':id', id);
             return await apiClient.get(url);
         } catch (error) {
             console.error(`Failed to track shipment ${id}:`, error);

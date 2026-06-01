@@ -4,7 +4,6 @@
  */
 
 const apiClient = require('./client');
-const API_CONFIG = require('../../../config/api.config');
 
 class ReportsService {
     /**
@@ -13,7 +12,8 @@ class ReportsService {
      */
     static async getModeratorReports() {
         try {
-            return await apiClient.get(API_CONFIG.ENDPOINTS.REPORTS.GET_MODERATOR);
+            const endpoint = apiClient.endpoints?.REPORTS?.GET_MODERATOR || '/moderator/reports';
+            return await apiClient.get(endpoint);
         } catch (error) {
             console.error('Failed to fetch moderator reports:', error);
             throw error;
@@ -26,7 +26,8 @@ class ReportsService {
      */
     static async getAdminReports() {
         try {
-            return await apiClient.get(API_CONFIG.ENDPOINTS.REPORTS.GET_ADMIN);
+            const endpoint = apiClient.endpoints?.REPORTS?.GET_ADMIN || '/admin/reports';
+            return await apiClient.get(endpoint);
         } catch (error) {
             console.error('Failed to fetch admin reports:', error);
             throw error;
@@ -48,7 +49,8 @@ class ReportsService {
         };
 
         try {
-            return await apiClient.post(API_CONFIG.ENDPOINTS.REPORTS.CREATE, payload);
+            const endpoint = apiClient.endpoints?.REPORTS?.CREATE || '/moderator/reports';
+            return await apiClient.post(endpoint, payload);
         } catch (error) {
             console.error('Failed to create report:', error);
             throw error;

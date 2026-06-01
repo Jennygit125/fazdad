@@ -1,6 +1,7 @@
 const auth = require('./modules/auth');
 const UsersService = require('./api/users');
 const ReportsService = require('./api/reports');
+const ValidationUtils = require('./utils/validation');
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Show a subtle loading state if the backend is waking up
@@ -189,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         sidebarHeader.innerHTML = `
-            <h3>${user.firstName} ${user.lastName}</h3>
+            <h3>${ValidationUtils.sanitizeHtml(user.firstName)} ${ValidationUtils.sanitizeHtml(user.lastName || '')}</h3>
             <p style="word-break: break-all;">${user.email}</p>
             <span class="role-badge">${user.role || 'user'}</span>
         `;
@@ -211,10 +212,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             usersBody.innerHTML = users.map(user => {
                 const isLocked = user.lockedUntil && new Date(user.lockedUntil) > new Date();
                 const userId = user.id || user._id;
+                const fName = ValidationUtils.sanitizeHtml(user.firstName || '');
+                const lName = ValidationUtils.sanitizeHtml(user.lastName || '');
+                
                 return `
                     <tr>
-                        <td><strong>${user.firstName || ''} ${user.lastName || ''}</strong></td>
-                        <td>${user.email}</td>
+                        <td><strong>${fName} ${lName}</strong></td>
+                        <td>${ValidationUtils.sanitizeHtml(user.email)}</td>
                         <td><span class="role-badge">${user.role}</span></td>
                         <td>
                             <span class="status-pill ${isLocked ? 'locked' : 'active'}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: ${isLocked ? 'var(--error-bg)' : '#e6fff5'}; color: ${isLocked ? 'var(--error-text)' : '#087a4f'};">${isLocked ? 'Locked' : 'Active'}</span>

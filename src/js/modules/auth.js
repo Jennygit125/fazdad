@@ -97,7 +97,7 @@ class AuthModule {
             return {
                 success: true,
                 user: response.user || {
-                    id: response.userId || response.id,
+                    id: response.userId || response.id || response._id,
                     email: response.email || email,
                     role: response.role || 'user',
                 },
