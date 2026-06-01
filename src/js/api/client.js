@@ -7,7 +7,8 @@ const API_CONFIG = require('../../../config/api.config');
 
 class ApiClient {
     constructor(config = API_CONFIG) {
-        this.baseUrl = config.BASE_URL;
+        // Prioritize Webpack-injected environment variable for Vercel compatibility
+        this.baseUrl = process.env.API_BASE_URL || config.BASE_URL;
         this.timeout = config.TIMEOUT;
         this.endpoints = config.ENDPOINTS;
     }
