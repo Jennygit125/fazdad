@@ -1,21 +1,20 @@
 /**
  * API Client
  * Handles all HTTP communication with the backend
+ * Standalone module with hardcoded defaults - no external config dependency
  */
 
-const API_CONFIG = require('../../../config/api.config');
-
 class ApiClient {
-    constructor(config = API_CONFIG) {
+    constructor() {
         // Prioritize Webpack-injected environment variable for Vercel compatibility
-        const rawUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
+        const rawUrl = process.env.API_BASE_URL || 'https://first-auth.onrender.com/api';
         // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
         this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
         // Increase timeout to 60s to handle Render's free tier "cold starts"
-        this.timeout = config?.TIMEOUT || 60000;
+        this.timeout = 60000;
         
-        // Hardcoded defaults ensure the app never crashes if the config file is missing/empty
-        const defaultEndpoints = {
+        // Hardcoded endpoints - no external config file needed
+        this.endpoints = {
             AUTH: {
                 SIGN_IN: '/signIn',
                 SIGN_UP: '/signUp',
@@ -32,12 +31,6 @@ class ApiClient {
                 GET_ADMIN: '/admin/reports',
                 CREATE: '/moderator/reports',
             }
-        };
-
-        // Merge provided config with defaults
-        this.endpoints = {
-            ...defaultEndpoints,
-            ...(config?.ENDPOINTS || {})
         };
     }
 

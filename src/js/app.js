@@ -148,11 +148,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const formData = new FormData(registerForm);
             const data = Object.fromEntries(formData.entries());
 
-            if (data.SetPassword !== data.confirmPassword) {
-                return showAuthError('Passwords do not match');
-            }
-
             try {
+                if (data.SetPassword !== data.confirmPassword) {
+                    throw new Error('Passwords do not match');
+                }
+
                 const result = await auth.register(
                     data.firstName, 
                     data.lastName || '', 
