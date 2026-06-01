@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usersBody = document.getElementById('users-body');
     const reportsList = document.getElementById('reports-list');
     const reportForm = document.getElementById('reportForm');
-    const statusEl = document.getElementById('management-status');
 
     const loadUsers = async () => {
         if (!usersBody) return;
