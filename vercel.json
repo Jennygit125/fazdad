@@ -1,14 +1,17 @@
 {
+  "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/index.html"
+      "src": "/js/(.*)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
     },
     {
-      "source": "/((?!js/|css/|pics/|assets/|index|login|dashboard|about|services|privacy).*)",
-      "destination": "/pages/$1"
+      "src": "/pics/(.*)",
+      "headers": { "cache-control": "no-cache" },
+      "continue": true
     }
   ]
 }

@@ -3,7 +3,12 @@ const UsersService = require('./api/users');
 const ReportsService = require('./api/reports');
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize Auth state from session
+    // Show a subtle loading state if the backend is waking up
+    const statusEl = document.getElementById('management-status');
+    if (statusEl) statusEl.textContent = 'Connecting to secure server...';
+
+    // Initialize Auth state from session. 
+    // Note: Render free tier may take ~30s to respond if cold.
     await auth.initialize();
 
     const loginForm = document.getElementById('loginForm');
@@ -67,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    if (loginBtn && registerBtn) {
+    if (loginBtn && registerBtn && loginForm && registerForm) {
         loginBtn.addEventListener('click', () => {
             loginForm.style.display = 'block';
             registerForm.style.display = 'none';
@@ -86,8 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const performLogout = (e) => {
         e.preventDefault();
         auth.logout();
-
-        window.location.href = 'login.html';
+        // Using root-relative path for Vercel cleanUrls compatibility
+        window.location.href = '/login';
     };
 
     const logoutLinks = ['logout-link', 'logout-link-sidebar'];
@@ -110,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const result = await auth.login(data.email, data.password);
                 if (result.success) {
-                    window.location.href = 'index.html';
+                    window.location.href = '/index';
                 }
             } catch (error) {
                 const status = error.status || (error.response && error.response.status);
