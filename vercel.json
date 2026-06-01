@@ -1,27 +1,7 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm install --include=dev && npm run build",
   "outputDirectory": "dist",
-  "version": 2,
+  "framework": "static",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "routes": [
-    {
-      "src": "/js/(.*)",
-      "headers": { "cache-control": "public, max-age=31536000, immutable" },
-      "continue": true
-    },
-    {
-      "src": "/pics/(.*)",
-      "headers": { "cache-control": "no-cache" },
-      "continue": true
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "trailingSlash": false
 }

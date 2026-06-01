@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+node_modules
+.env
+.env.local
+.env.*.local
+README.md
+ARCHITECTURE.md
+BACKEND_INTEGRATION.md
+styling.txt
+setup.bat
+setup.sh
