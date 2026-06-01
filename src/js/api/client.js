@@ -8,7 +8,9 @@ const API_CONFIG = require('../../../config/api.config');
 class ApiClient {
     constructor(config = API_CONFIG) {
         // Prioritize Webpack-injected environment variable for Vercel compatibility
-        this.baseUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
+        const rawUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
+        // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
+        this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
         this.timeout = config?.TIMEOUT || 30000;
         // Ensure endpoints always has a structure to avoid "undefined" property errors
         this.endpoints = config?.ENDPOINTS || { AUTH: {}, USERS: {}, REPORTS: {} };
@@ -79,6 +81,10 @@ class ApiClient {
             return await response.json();
         } catch (error) {
             console.error(`API Error [${method} ${endpoint}]:`, error);
+            // Specific handling for CORS or Network failures which fetch() reports as TypeError
+            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                throw new Error('Connection failed. This is likely a CORS security block or the server is waking up from sleep.');
+            }
             throw error;
         }
     }
