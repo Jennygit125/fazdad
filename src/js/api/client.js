@@ -10,7 +10,8 @@ class ApiClient {
         // Prioritize Webpack-injected environment variable for Vercel compatibility
         this.baseUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
         this.timeout = config?.TIMEOUT || 30000;
-        this.endpoints = config?.ENDPOINTS || {};
+        // Ensure endpoints always has a structure to avoid "undefined" property errors
+        this.endpoints = config?.ENDPOINTS || { AUTH: {}, USERS: {}, REPORTS: {} };
     }
 
     /**
