@@ -12,7 +12,8 @@ class UsersService {
      */
     static async getProfile() {
         try {
-            return await apiClient.get(API_CONFIG.ENDPOINTS.USERS.PROFILE);
+            const endpoint = apiClient.endpoints?.USERS?.PROFILE || '/user/profile';
+            return await apiClient.get(endpoint);
         } catch (error) {
             console.error('Failed to fetch user profile:', error);
             throw error;
@@ -24,7 +25,8 @@ class UsersService {
      */
     static async getAllUsers() {
         try {
-            return await apiClient.get(API_CONFIG.ENDPOINTS.USERS.GET_ALL);
+            const endpoint = apiClient.endpoints?.USERS?.GET_ALL || '/admin/getAllUsers';
+            return await apiClient.get(endpoint);
         } catch (error) {
             console.error('Failed to fetch all users:', error);
             throw error;
@@ -38,7 +40,8 @@ class UsersService {
         if (!userId) throw new Error('User ID is required');
 
         try {
-            const url = API_CONFIG.ENDPOINTS.USERS.DELETE.replace(':id', userId);
+            const template = apiClient.endpoints?.USERS?.DELETE || '/admin/user/:id';
+            const url = template.replace(':id', userId);
             return await apiClient.delete(url);
         } catch (error) {
             console.error(`Failed to delete user ${userId}:`, error);
@@ -54,7 +57,8 @@ class UsersService {
         if (!userId) throw new Error('User ID is required');
 
         try {
-            const url = API_CONFIG.ENDPOINTS.USERS.LOCK.replace(':id', userId);
+            const template = apiClient.endpoints?.USERS?.LOCK || '/user/:id/lock';
+            const url = template.replace(':id', userId);
             // Backend expects duration (minutes or ISO string) for Admin, 
             // or empty body for Moderator 1-day auto-lock
             const body = duration ? { duration } : {}; 
@@ -73,7 +77,8 @@ class UsersService {
         if (!userId) throw new Error('User ID is required');
 
         try {
-            const url = API_CONFIG.ENDPOINTS.USERS.PROMOTE.replace(':id', userId);
+            const template = apiClient.endpoints?.USERS?.PROMOTE || '/admin/promote/:id';
+            const url = template.replace(':id', userId);
             return await apiClient.post(url, {});
         } catch (error) {
             console.error(`Failed to promote user ${userId}:`, error);

@@ -85,6 +85,7 @@ class AuthModule {
         try {
             // Call backend signUp endpoint
             const endpoint = apiClient.endpoints?.AUTH?.SIGN_UP || '/signUp';
+            console.log(`Attempting registration at: ${apiClient.baseUrl}${endpoint}`);
             const response = await apiClient.post(endpoint, {
                 firstName,
                 lastName,
