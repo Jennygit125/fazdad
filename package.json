@@ -2,11 +2,12 @@
   "name": "fazdad",
   "version": "1.0.0",
   "description": "simple page",
-  "main": "script.js",
+  "main": "src/js/index.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch",
-    "start": "webpack serve --mode development"
+    "build": "webpack --mode production --config webpack.config.cjs",
+    "dev": "webpack --mode development --watch --config webpack.config.cjs",
+    "start": "webpack serve --mode development --config webpack.config.cjs",
+    "setup": "node -e \"require('fs').copyFileSync('.env.example', '.env')\""
   },
   "repository": {
     "type": "git",
@@ -15,13 +16,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Jennygit125/fazdad/issues"
   },
   "homepage": "https://github.com/Jennygit125/fazdad#readme",
   "devDependencies": {
     "copy-webpack-plugin": "^14.0.0",
+    "dotenv": "^16.4.5",
     "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"

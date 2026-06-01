@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Services | Fazdad Logistics</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        if (!sessionStorage.getItem('fazdad_session_v1')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body class="service-body">
+
+    <header class="site-header">
+        <div class="logo-container">
+            <a href="index.html" aria-label="Fazdad Logistics Home" id="logo-placeholder"><svg class="header-logo" width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg"><path d="M15 45V20c0-5 3-8 7-8h6m-13 16h13" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M42 45V20c0-5-3-8-7-8-5 0-8 3-8 8v25m0-8h15" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M38 30l8-8-8-8" stroke="#00AEEF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="60" y="32" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="#1513a3">Fazdad</text><text x="60" y="48" font-family="Arial,sans-serif" font-size="12" fill="#00AEEF" letter-spacing="1">LOGISTICS</text></svg>
+            </a>
+        </div>
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html" class="active">Services</a>
+            <a href="admin.html" id="admin-nav-link" style="display: none;">Admin</a>
+            <a href="moderator.html" id="moderator-nav-link" style="display: none;">Moderator</a>
+            <a href="login.html" id="login-nav-link">Login</a>
+            <div class="profile-dropdown" id="user-nav-item" style="display: none;">
+                <button class="dropbtn" id="nav-user-name">Account</button>
+                <div class="dropdown-content">
+                    <a href="index.html#auth-profile-section">My Profile</a>
+                    <a href="#" id="logout-link">Logout</a>
+                </div>
+            </div>
+            <a href="privacy.html">Privacy Policy</a>
+        </nav>
+    </header>
+
+    <main id="article-container" class="modern-services">
+        <section class="intro-card">
+            <h1>Our Professional Services</h1>
+            <p>Tailored logistics solutions designed to meet the demands of a global economy.</p>
+        </section>
+
+        <div class="cards-grid">
+            <div class="info-card">
+                <div class="service-icon">🚚</div>
+                <h3>Freight Forwarding</h3>
+                <p>Comprehensive air, sea, and road freight solutions ensuring your cargo reaches its destination on time, every time.</p>
+            </div>
+
+            <div class="info-card">
+                <div class="service-icon">🏭</div>
+                <h3>Warehousing & Distribution</h3>
+                <p>Secure, climate-controlled storage facilities with advanced inventory management systems for seamless distribution.</p>
+            </div>
+
+            <div class="info-card">
+                <div class="service-icon">📦</div>
+                <h3>Last-Mile Delivery</h3>
+                <p>Speedy and reliable final-leg delivery services to ensure customer satisfaction at the doorstep.</p>
+            </div>
+
+            <div class="info-card">
+                <div class="service-icon">📊</div>
+                <h3>Supply Chain Consulting</h3>
+                <p>Expert analysis and optimization of your logistics workflow to reduce costs and increase efficiency.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Fazdad Logistics</h3>
+                <p>Your end-to-end logistics resource partner.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>Email: <a href="mailto:info@fazdad.com">info@fazdad.com</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 Fazdad Logistics Resources. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="/js/app.js" defer></script>
+</body>
+</html>

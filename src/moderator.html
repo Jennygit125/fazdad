@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Moderator | Fazdad Logistics</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo-container">
+            <a href="index.html" aria-label="Fazdad Logistics Home" id="logo-placeholder"><svg class="header-logo" width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg"><path d="M15 45V20c0-5 3-8 7-8h6m-13 16h13" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M42 45V20c0-5-3-8-7-8-5 0-8 3-8 8v25m0-8h15" stroke="#1513a3" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M38 30l8-8-8-8" stroke="#00AEEF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="60" y="32" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="#1513a3">Fazdad</text><text x="60" y="48" font-family="Arial,sans-serif" font-size="12" fill="#00AEEF" letter-spacing="1">LOGISTICS</text></svg></a>
+        </div>
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="admin.html" id="admin-nav-link" style="display: none;">Admin</a>
+            <a href="moderator.html" id="moderator-nav-link" class="active" style="display: none;">Moderator</a>
+            <a href="login.html" id="login-nav-link">Login</a>
+            <div class="profile-dropdown" id="user-nav-item" style="display: none;">
+                <button class="dropbtn" id="nav-user-name">Account</button>
+                <div class="dropdown-content">
+                    <a href="index.html#auth-profile-section">My Profile</a>
+                    <a href="#" id="logout-link">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="management-shell">
+        <section class="management-hero">
+            <div>
+                <span class="service-tag">Moderator Workspace</span>
+                <h1>Reports and user safety controls</h1>
+            </div>
+            <p id="management-status" class="auth-message info" aria-live="polite">Loading workspace...</p>
+        </section>
+
+        <section class="management-grid">
+            <article class="management-card">
+                <h2>Profile</h2>
+                <div id="profile-grid" class="profile-grid"></div>
+            </article>
+
+            <article class="management-card">
+                <h2>Create Report</h2>
+                <form id="reportForm" class="management-form">
+                    <input type="text" name="title" placeholder="Report title" required>
+                    <textarea name="description" rows="5" placeholder="Report details" required></textarea>
+                    <button type="submit" class="call-btn">Create Report</button>
+                </form>
+            </article>
+        </section>
+
+        <section class="management-card">
+            <h2>Reports</h2>
+            <div id="reports-list" class="reports-list"></div>
+        </section>
+
+        <section class="management-card">
+            <h2>User Directory</h2>
+            <div class="table-wrap">
+                <table class="management-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+   <script src="/js/app.js" defer></script>
+</body>
+</html>
