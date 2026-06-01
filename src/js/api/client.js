@@ -13,8 +13,12 @@ class ApiClient {
         this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
         // Increase timeout to 60s to handle Render cold starts
         this.timeout = config?.TIMEOUT || 60000;
-        // Ensure endpoints always has a structure to avoid "undefined" property errors
-        this.endpoints = config?.ENDPOINTS || { AUTH: {}, USERS: {}, REPORTS: {} };
+        // Robust initialization to prevent "Cannot read properties of undefined (reading 'AUTH')"
+        this.endpoints = (config && config.ENDPOINTS) ? config.ENDPOINTS : { 
+            AUTH: { SIGN_IN: '/signIn', SIGN_UP: '/signUp' }, 
+            USERS: {}, 
+            REPORTS: {} 
+        };
     }
 
     /**
