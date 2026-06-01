@@ -82,10 +82,27 @@ class AuthModule {
         }
 
         try {
-            // Call backend signUp endpoint
-            // Use an extremely defensive check to ensure endpoints.AUTH exists
-            const endpoints = apiClient.endpoints || { AUTH: {} };
-            const endpoint = (endpoints.AUTH && endpoints.AUTH.SIGN_UP) ? endpoints.AUTH.SIGN_UP : '/signUp';
+            // Call backend signUp endpoint with EXTREME defensive checks
+            console.log('[AUTH] Register called, apiClient status:', {
+                exists: !!apiClient,
+                hasEndpoints: !!(apiClient && apiClient.endpoints),
+                hasAuth: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH),
+                hasSIGN_UP: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH && apiClient.endpoints.AUTH.SIGN_UP),
+                baseUrl: apiClient?.baseUrl
+            });
+            
+            // Explicit null checks
+            if (!apiClient) {
+                throw new Error('API Client not initialized');
+            }
+            if (!apiClient.endpoints) {
+                throw new Error('API Client endpoints not defined');
+            }
+            if (!apiClient.endpoints.AUTH) {
+                throw new Error('AUTH endpoints not defined');
+            }
+            
+            const endpoint = apiClient.endpoints.AUTH.SIGN_UP || '/signUp';
             console.log(`Attempting registration at: ${apiClient.baseUrl}${endpoint}`);
             const response = await apiClient.post(endpoint, {
                 firstName,
@@ -117,10 +134,26 @@ class AuthModule {
         }
 
         try {
-            // Call backend signIn endpoint
-            // Defensive check: ensure AUTH object exists before accessing SIGN_IN
-            const endpoints = apiClient.endpoints || { AUTH: {} };
-            const endpoint = (endpoints.AUTH && endpoints.AUTH.SIGN_IN) ? endpoints.AUTH.SIGN_IN : '/signIn';
+            // Call backend signIn endpoint with defensive checks
+            console.log('[AUTH] Login called, apiClient status:', {
+                exists: !!apiClient,
+                hasEndpoints: !!(apiClient && apiClient.endpoints),
+                hasAuth: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH),
+                hasSIGN_IN: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH && apiClient.endpoints.AUTH.SIGN_IN),
+                baseUrl: apiClient?.baseUrl
+            });
+            
+            if (!apiClient) {
+                throw new Error('API Client not initialized');
+            }
+            if (!apiClient.endpoints) {
+                throw new Error('API Client endpoints not defined');
+            }
+            if (!apiClient.endpoints.AUTH) {
+                throw new Error('AUTH endpoints not defined');
+            }
+            
+            const endpoint = apiClient.endpoints.AUTH.SIGN_IN || '/signIn';
             const response = await apiClient.post(endpoint, {
                 email: email.toLowerCase(),
                 password,

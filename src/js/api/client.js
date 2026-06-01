@@ -6,32 +6,40 @@
 
 class ApiClient {
     constructor() {
-        // Prioritize Webpack-injected environment variable for Vercel compatibility
-        const rawUrl = process.env.API_BASE_URL || 'https://first-auth.onrender.com/api';
-        // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
-        this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
-        // Increase timeout to 60s to handle Render's free tier "cold starts"
-        this.timeout = 60000;
-        
-        // Hardcoded endpoints - no external config file needed
-        this.endpoints = {
-            AUTH: {
-                SIGN_IN: '/signIn',
-                SIGN_UP: '/signUp',
-            },
-            USERS: {
-                PROFILE: '/user/profile',
-                GET_ALL: '/admin/getAllUsers',
-                DELETE: '/admin/user/:id',
-                LOCK: '/user/:id/lock',
-                PROMOTE: '/admin/promote/:id',
-            },
-            REPORTS: {
-                GET_MODERATOR: '/moderator/reports',
-                GET_ADMIN: '/admin/reports',
-                CREATE: '/moderator/reports',
-            }
-        };
+        try {
+            // Prioritize Webpack-injected environment variable for Vercel compatibility
+            const rawUrl = process.env.API_BASE_URL || 'https://first-auth.onrender.com/api';
+            // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
+            this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
+            // Increase timeout to 60s to handle Render's free tier "cold starts"
+            this.timeout = 60000;
+            
+            // Hardcoded endpoints - no external config file needed
+            this.endpoints = {
+                AUTH: {
+                    SIGN_IN: '/signIn',
+                    SIGN_UP: '/signUp',
+                },
+                USERS: {
+                    PROFILE: '/user/profile',
+                    GET_ALL: '/admin/getAllUsers',
+                    DELETE: '/admin/user/:id',
+                    LOCK: '/user/:id/lock',
+                    PROMOTE: '/admin/promote/:id',
+                },
+                REPORTS: {
+                    GET_MODERATOR: '/moderator/reports',
+                    GET_ADMIN: '/admin/reports',
+                    CREATE: '/moderator/reports',
+                }
+            };
+            
+            console.log('[API_CLIENT] Successfully initialized with baseUrl:', this.baseUrl);
+            console.log('[API_CLIENT] Endpoints loaded:', !!this.endpoints, 'AUTH:', !!this.endpoints?.AUTH);
+        } catch (error) {
+            console.error('[API_CLIENT] Constructor error:', error);
+            throw error;
+        }
     }
 
     /**
