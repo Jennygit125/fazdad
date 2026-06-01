@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Note: Render free tier may take ~30s to respond if cold.
     await auth.initialize();
 
+    // Clear "Connecting" status for regular users if workspace logic isn't triggered
+    if (!auth.isModerator() && statusEl) {
+        statusEl.textContent = '';
+    }
+
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
 
@@ -150,12 +155,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const result = await auth.register(
                     data.firstName, 
-                    data.lastName, 
+                    data.lastName || '', 
                     data.email, 
                     data.SetPassword
                 );
                 if (result.success) {
-                    // Auto-login after registration or redirect to login
+                    loginForm.querySelector('[name="email"]').value = data.email;
                     showAuthError('Registration successful! Please login.');
                     loginBtn.click();
                 }
@@ -185,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         sidebarHeader.innerHTML = `
             <h3>${user.firstName} ${user.lastName}</h3>
-            <p>${user.email}</p>
+            <p style="word-break: break-all;">${user.email}</p>
             <span class="role-badge">${user.role || 'user'}</span>
         `;
 

@@ -429,7 +429,7 @@ body {
 
 /* Simulated Avatar placeholder */
 .dropbtn::before {
-    content: 'U'; /* Default initial */
+    content: attr(data-initial); /* Dynamically use the attribute set by JS */
     display: flex;
     align-items: center;
     justify-content: center;
