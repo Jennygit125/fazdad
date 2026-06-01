@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
@@ -12,6 +14,14 @@
       "src": "/pics/(.*)",
       "headers": { "cache-control": "no-cache" },
       "continue": true
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
