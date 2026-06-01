@@ -6,7 +6,6 @@
 const apiClient = require('../api/client');
 const { StorageManager } = require('../utils/storage');
 const ValidationUtils = require('../utils/validation');
-const API_CONFIG = require('../../../config/api.config');
 
 class AuthModule {
     constructor() {
@@ -117,13 +116,18 @@ class AuthModule {
 
         try {
             // Call backend signIn endpoint
-            const endpoint = apiClient.endpoints?.AUTH?.SIGN_IN || '/signIn';
+            // Defensive check: ensure AUTH object exists before accessing SIGN_IN
+            const endpoint = (apiClient.endpoints?.AUTH && apiClient.endpoints.AUTH.SIGN_IN) ? apiClient.endpoints.AUTH.SIGN_IN : '/signIn';
             const response = await apiClient.post(endpoint, {
                 email: email.toLowerCase(),
                 password,
             });
 
             const { token, user: userData } = response;
+
+            if (!userData) {
+                throw new Error('User data missing from server response');
+            }
 
             if (!token) {
                 throw new Error('No authentication token received from server');

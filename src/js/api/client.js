@@ -11,7 +11,8 @@ class ApiClient {
         const rawUrl = process.env.API_BASE_URL || config?.BASE_URL || 'https://first-auth.onrender.com/api';
         // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
         this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
-        this.timeout = config?.TIMEOUT || 30000;
+        // Increase timeout to 60s to handle Render cold starts
+        this.timeout = config?.TIMEOUT || 60000;
         // Ensure endpoints always has a structure to avoid "undefined" property errors
         this.endpoints = config?.ENDPOINTS || { AUTH: {}, USERS: {}, REPORTS: {} };
     }

@@ -4,7 +4,6 @@
  */
 
 const apiClient = require('./client');
-const API_CONFIG = require('../../../config/api.config');
 
 class UsersService {
     /**
