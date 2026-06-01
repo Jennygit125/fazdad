@@ -44,6 +44,7 @@ class ReportsService {
             contentType,
             reportType,
             description,
+            status: reported,
             priority: priority || 'medium',
             actionTaken: actionTaken || 'flagged for review'
         };
