@@ -67,7 +67,7 @@ body {
 }
 
 .header-logo {
-    height: clamp(1.8rem, 5vw, 2.5rem);
+    height: clamp(1.8rem, 4vw, 2.5rem);
     width: auto;
     transition: transform 0.3s ease;
     will-change: transform;
@@ -87,7 +87,6 @@ body {
     position: relative;
     padding: 0.3rem 0; /* Padding for underline effect */
     white-space: nowrap;
-    transform-origin: center;
     transition: var(--transition);
 }
 
@@ -100,10 +99,6 @@ body {
     left: 0;
     background-color: var(--accent);
     transition: width 0.3s ease;
-}
-
-.navigation a:hover {
-    transform: scale(1.05);
 }
 
 .navigation a:hover::after,
@@ -507,9 +502,8 @@ body {
 }
 
 .dropbtn:active {
-    transform: translateY(1px) scale(0.96);
+    transform: translateY(0);
     background-color: var(--bg-light);
-    box-shadow: none;
 }
 
 /* Rotate chevron when sidebar is open */
@@ -526,8 +520,7 @@ body {
     background-color: var(--white);
     box-shadow: -0.625rem 0 2.5rem rgba(0, 0, 0, 0.15);
     z-index: 10001; /* Ensure it stays above the header */
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform: translateX(100%) scale(0.98);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.4s ease;
     opacity: 0;
     display: flex;
     flex-direction: column;
@@ -543,19 +536,8 @@ body {
 
 .dropdown-content.show {
     right: 0; /* Slide in */
-    transform: translateX(0) scale(1);
     opacity: 1;
 }
-
-/* Staggered Sidebar Links Entrance */
-.dropdown-content.show a {
-    animation: sidebarLinkFade 0.4s ease forwards;
-    opacity: 0;
-}
-
-.dropdown-content.show a:nth-child(2) { animation-delay: 0.1s; }
-.dropdown-content.show a:nth-child(3) { animation-delay: 0.15s; }
-.dropdown-content.show a:nth-child(4) { animation-delay: 0.2s; }
 
 .sidebar-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-hover));
@@ -568,11 +550,6 @@ body {
     font-size: 1.2rem;
     font-weight: 800;
     margin-bottom: 0.3125rem;
-}
-
-@keyframes sidebarLinkFade {
-    from { opacity: 0; transform: translateX(15px); }
-    to { opacity: 1; transform: translateX(0); }
 }
 
 .sidebar-header p {
@@ -622,33 +599,29 @@ body {
 @media (max-width: 768px) {
     .site-header {
         min-height: auto;
-        padding: 0.8rem 0 0.5rem; 
+        padding: 0.75rem 0; /* Remove side padding to allow track to bleed to edges */
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        overflow: visible;
+        overflow: visible; /* Ensure fixed sidebar isn't clipped */
     }
 
     .logo-container {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         padding: 0 5%;
     }
 
     .navigation {
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 1.75rem;
+        justify-content: flex-start; /* Align track to start */
+        gap: 1.5rem;
         padding: 0.75rem 5%;
-        border-top: 0.0625rem solid rgba(0, 0, 0, 0.06);
-        overflow-x: auto;
-        overflow-y: visible;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        mask-image: linear-gradient(to right, black 80%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+        margin-top: 0.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        overflow-x: auto; /* Enable the swipe track */
+        white-space: nowrap; /* Prevent links from wrapping */
+        -webkit-overflow-scrolling: touch; /* Native feel for iOS */
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
     }
 
     .navigation::-webkit-scrollbar {
@@ -694,6 +667,11 @@ body {
 .info-card {
     border-bottom: 5px solid var(--accent);
 }
+
+.service-visual { flex: 1; border-radius: 1rem; overflow: hidden; }
+.service-visual img { width: 100%; height: auto; object-fit: cover; display: block; }
+
+/* Management Workspace Layout */
 .management-shell {
     padding: 2rem 5%;
     max-width: 87.5rem;
@@ -716,6 +694,32 @@ body {
     color: var(--primary);
 }
 
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.profile-item strong {
+    font-size: 0.7rem;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.profile-item span {
+    font-weight: 600;
+    color: var(--primary);
+}
+
 @media (max-width: 48rem) {
     .profile-grid {
         grid-template-columns: 1fr;
@@ -727,6 +731,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 48rem) {
@@ -742,7 +753,7 @@ body {
     border-radius: 0.5rem;
     font-size: 0.9rem;
     background-color: #f8fafc;
-    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     animation: fieldFadeIn 0.5s ease backwards;
 }
 
@@ -755,8 +766,8 @@ body {
     outline: none;
     border-color: var(--accent);
     background-color: var(--white);
-    box-shadow: 0 0 0 4px rgba(0, 174, 239, 0.12);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px rgba(0, 174, 239, 0.15);
+    transform: translateY(-1px);
 }
 
 .char-counter {
@@ -797,6 +808,31 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.management-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.management-table th, .management-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #edf2f7;
+    white-space: nowrap;
+}
+
+.management-table td:nth-child(2) {
+    max-width: 12rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 48rem) {
+    .management-table th, .management-table td {
+        padding: 0.8rem 0.6rem;
+        font-size: 0.85rem;
+    }
+}
+
 .management-table th {
     background: #f1f5f9;
     font-weight: 700;
@@ -812,12 +848,6 @@ body {
     font-size: 0.75rem;
     font-weight: 700;
     display: inline-block;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.action-btn:active {
-    transform: scale(0.92) !important;
-    transition: transform 0.1s ease;
 }
 
 .status-pill.active {
@@ -828,10 +858,7 @@ body {
 .status-pill.locked {
     background: var(--error-bg);
     color: var(--error-text);
-}
-/* New styles from styling.txt */
-.service-visual { flex: 1; border-radius: 1rem; overflow: hidden; }
-.service-visual img { width: 100%; height: auto; object-fit: cover; display: block; }
+ }
 
 /* Toast Notification System */
 .toast-container {
