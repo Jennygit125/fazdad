@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (isAuthenticated) {
             if (loginNavLink) loginNavLink.style.display = 'none';
-            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'block' : 'none';
-            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'block' : 'none';
+            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-block' : 'none';
+            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-block' : 'none';
 
             if (userNavItem) {
                 userNavItem.style.display = 'flex';
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         } else {
-            if (loginNavLink) loginNavLink.style.display = 'block';
+            if (loginNavLink) loginNavLink.style.display = 'inline-block';
             if (userNavItem) userNavItem.style.display = 'none';
             if (adminNavLink) adminNavLink.style.display = 'none';
             if (moderatorNavLink) moderatorNavLink.style.display = 'none';
@@ -305,7 +305,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (status === 403) {
                 reportsList.innerHTML = `<div class="auth-message error">You are not authorized to view reports.</div>`;
             } else {
-                reportsList.innerHTML = `<div class="auth-message error">Network Error: Could not fetch reports.</div>`;
+                reportsList.innerHTML = `
+                    <div class="auth-message error">Network Error: Could not fetch reports.</div>
+                    <button class="call-btn" onclick="location.reload()" style="padding: 5px 15px; font-size: 0.8rem; margin: 10px 0;">
+                        Retry Connection
+                    </button>`;
             }
         }
     };
@@ -324,9 +328,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (action === 'lock') {
                     let duration = null;
                     if (auth.isAdmin()) {
-                        const input = prompt('Minutes to lock (or leave blank for 1 day):');
+                        const input = prompt('Minutes to lock (e.g. 1440 for 1 day, or leave blank):');
                         if (input === null) return; // User cancelled
-                        duration = input || null;
+                        
+                        const minutes = input.trim();
+                        if (minutes !== '' && (isNaN(minutes) || parseInt(minutes) <= 0)) {
+                            showToast('Please enter a valid positive number of minutes.', 'error');
+                            return;
+                        }
+                        duration = minutes || null;
                     }
                     await UsersService.lockUser(id, duration);
                 } else if (action === 'promote') {
@@ -360,12 +370,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const submitBtn = reportForm.querySelector('button');
             
             const reportData = {
-                contentId: formData.get('contentId'),
+                contentId: formData.get('contentId').trim(),
                 contentType: formData.get('contentType'),
                 reportType: formData.get('reportType'),
-                description: formData.get('description'),
+                description: formData.get('description').trim(),
                 priority: formData.get('priority')
             };
+
+            // Client-side Integrity Check
+            if (!reportData.contentId || !reportData.contentType || !reportData.reportType) {
+                return showToast('Please fill out all required report fields.', 'error');
+            }
 
             // Error Resilience: Validate ID format (expecting MongoDB ObjectId)
             if (reportData.contentId.length < 12) {

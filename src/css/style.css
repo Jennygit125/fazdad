@@ -67,7 +67,7 @@ body {
 }
 
 .header-logo {
-    height: 3rem;
+    height: clamp(1.8rem, 4vw, 2.5rem);
     width: auto;
     transition: transform 0.3s ease;
     will-change: transform;
@@ -146,12 +146,37 @@ body {
     cursor: pointer;
     font-weight: bold;
     margin-top: 1.25rem;
-    transition: var(--transition);
+    transition: var(--transition), transform 0.1s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .call-btn:hover {
     background-color: var(--primary-hover);
-    transform: scale(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 174, 239, 0.4);
+}
+
+.call-btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+/* Premium Button Shine Effect */
+.call-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(30deg);
+    transition: none;
+}
+
+.call-btn:hover::after {
+    left: 150%;
+    transition: left 0.7s ease-in-out;
 }
 
 /* Cards Grid */
@@ -166,11 +191,12 @@ body {
     padding: 1.875rem;
     border-radius: 0.75rem;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
 }
 
 .info-card:hover {
-    transform: translateY(-10px); /* More pronounced hover effect */
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 1.25rem 2.5rem rgba(0,0,0,0.2);
 }
 
 .info-card h3 {
@@ -325,11 +351,18 @@ body {
     font-weight: bold;
     cursor: pointer;
     margin-top: 0.625rem;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition), transform 0.1s ease;
 }
 
 #login:hover, #register:hover {
     background: var(--primary-hover); /* Darker primary on hover */
-    transform: translateY(-0.125rem); /* Subtle lift effect */
+    transform: translateY(-2px);
+}
+
+#login:active, #register:active {
+    transform: scale(0.97);
 }
 
 /* Profile Management */
@@ -487,7 +520,8 @@ body {
     background-color: var(--white);
     box-shadow: -0.625rem 0 2.5rem rgba(0, 0, 0, 0.15);
     z-index: 10001; /* Ensure it stays above the header */
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Professional slide curve */
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.4s ease;
+    opacity: 0;
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -502,6 +536,7 @@ body {
 
 .dropdown-content.show {
     right: 0; /* Slide in */
+    opacity: 1;
 }
 
 .sidebar-header {
@@ -566,7 +601,11 @@ body {
         min-height: auto;
         padding: 0.8rem 4%;
         flex-wrap: wrap;
+        padding: 0.6rem 4%;
+        flex-direction: column;
+        align-items: center;
         justify-content: space-between;
+        overflow: hidden;
     }
 
 
@@ -577,15 +616,27 @@ body {
         gap: 0.5rem;
         margin-top: 0.5rem;
         padding-top: 0.5rem;
+        justify-content: flex-start;
+        gap: 1.25rem;
+        margin-top: 0.75rem;
+        padding: 0.5rem 0.25rem;
         border-top: 0.0625rem solid rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .navigation::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
     }
 
     .profile-dropdown {
         margin-left: 0;
+        flex-shrink: 0;
     }
 
     body {
-        padding-top: 10.5rem; /* Tuned safe space for mobile header wrapping */
+        padding-top: 8.5rem; /* Optimized space for the new dual-row mobile header */
     }
 
     .header-logo {
@@ -719,20 +770,21 @@ body {
     border-radius: 0.5rem;
     font-size: 0.9rem;
     background-color: #f8fafc;
-    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     animation: fieldFadeIn 0.5s ease backwards;
 }
 
 .input-field:hover {
-    border-color: #cbd5e1;
-    background-color: #f1f5f9;
+    border-color: var(--accent);
+    background-color: var(--white);
 }
 
 .input-field:focus {
     outline: none;
     border-color: var(--accent);
     background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.1);
+    box-shadow: 0 0 0 4px rgba(0, 174, 239, 0.15);
+    transform: translateY(-1px);
 }
 
 .char-counter {
