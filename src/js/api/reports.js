@@ -38,15 +38,13 @@ class ReportsService {
      * Create a new report
      * Moderator only
      */
-    static async createReport({ contentId, contentType, reportType, description, priority, actionTaken }) {
+    static async createReport({ contentId, contentType, reportType, description, priority }) {
         const payload = {
             contentId,
             contentType,
             reportType,
             description,
-            status: reported,
-            priority: priority || 'medium',
-            actionTaken: actionTaken || 'flagged for review'
+            priority: priority || 'medium'
         };
 
         try {

@@ -82,9 +82,11 @@ const reports = await ReportsService.getAdminReports();
 
 // Create report (moderator only)
 await ReportsService.createReport({
-    title: 'Report Title',
-    description: 'Report description',
-    // ... other fields
+    contentId: '',
+    contentType: 'comment',
+    reportType: 'harassment',
+    description: '',
+    priority: ''
 });
 
 // Auto-choose endpoint based on role
@@ -237,9 +239,9 @@ async function loadUserProfile() {
     try {
         const profile = await UsersService.getProfile();
         
-        document.querySelector('[data-user-name]').textContent = profile.displayName;
+        document.querySelector('[data-user-name]').textContent = profile.firstName;
         document.querySelector('[data-user-email]').textContent = profile.email;
-        document.querySelector('[data-user-role]').textContent = profile.role.toUpperCase();
+        document.querySelector('[data-user-role]').textContent = profile.role;
         
     } catch (error) {
         if (error.status === 401) {
@@ -290,9 +292,11 @@ async function submitReport() {
     }
 
     const reportData = {
-        title: document.querySelector('[name="title"]').value,
+        contentId: document.querySelector('[name="contentId"]').value,
+        contentType: document.querySelector('[name="contentType"]').value,
+        reportType: document.querySelector('[name="reportType"]').value,
         description: document.querySelector('[name="description"]').value,
-        category: document.querySelector('[name="category"]').value,
+        priority: document.querySelector('[name="priority"]').value,
     };
 
     try {

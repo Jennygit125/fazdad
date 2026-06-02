@@ -82,9 +82,11 @@ const reports = await ReportsService.getAdminReports();
 
 // Create report (moderator only)
 await ReportsService.createReport({
-    title: 'Report Title',
-    description: 'Report description',
-    // ... other fields
+    contentId: '64b1f8e5c4a92a11b8ef0921',
+    contentType: 'comment',
+    reportType: 'harassment',
+    description: 'User is being disruptive',
+    priority: 'high'
 });
 
 // Auto-choose endpoint based on role
@@ -291,9 +293,11 @@ async function submitReport() {
     }
 
     const reportData = {
-        title: document.querySelector('[name="title"]').value,
+        contentId: document.querySelector('[name="contentId"]').value,
+        contentType: document.querySelector('[name="contentType"]').value,
+        reportType: document.querySelector('[name="reportType"]').value,
         description: document.querySelector('[name="description"]').value,
-        category: document.querySelector('[name="category"]').value,
+        priority: document.querySelector('[name="priority"]').value,
     };
 
     try {

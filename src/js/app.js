@@ -205,12 +205,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reportsList = document.getElementById('reports-list');
     const reportForm = document.getElementById('reportForm');
 
+    const loadProfile = () => {
+        const profileGrid = document.getElementById('profile-grid');
+        if (!profileGrid) return;
+        const user = auth.getCurrentUser();
+        if (!user) return;
+        profileGrid.innerHTML = `
+            <div class="profile-item"><strong>First Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.firstName)}</span></div>
+            <div class="profile-item"><strong>Last Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.lastName || '')}</span></div>
+            <div class="profile-item"><strong>Email:</strong> <span>${ValidationUtils.sanitizeHtml(user.email)}</span></div>
+            <div class="profile-item"><strong>Role:</strong> <span class="role-badge">${user.role}</span></div>
+        `;
+    };
+
     const loadUsers = async () => {
         if (!usersBody) return;
+        // Inject Skeletons
+        usersBody.innerHTML = Array(5).fill(0).map(() => `
+            <tr>
+                <td><div class="skeleton skeleton-text" style="width: 80%"></div></td>
+                <td><div class="skeleton skeleton-text" style="width: 60%"></div></td>
+                <td><div class="skeleton skeleton-pill"></div></td>
+                <td><div class="skeleton skeleton-pill"></div></td>
+                <td><div style="display: flex; gap: 0.5rem;"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div></td>
+            </tr>
+        `).join('');
+
         try {
-            const users = await UsersService.getAllUsers();
+            const response = await UsersService.getAllUsers(); // Returns { users: [...] }
+            const users = response.users || [];
             usersBody.innerHTML = users.map(user => {
-                const isLocked = user.lockedUntil && new Date(user.lockedUntil) > new Date();
+                const isLocked = user.lockUntil && new Date(user.lockUntil) > new Date();
                 const userId = user.id || user._id;
                 const fName = ValidationUtils.sanitizeHtml(user.firstName || '');
                 const lName = ValidationUtils.sanitizeHtml(user.lastName || '');
@@ -241,6 +266,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const loadReports = async () => {
         if (!reportsList) return;
+        // Inject Skeletons
+        reportsList.innerHTML = Array(3).fill(0).map(() => `
+            <div class="info-card" style="margin-bottom: 1rem; border-left: 4px solid #eee;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <div class="skeleton skeleton-title" style="width: 40%"></div>
+                    <div class="skeleton skeleton-pill"></div>
+                </div>
+                <div class="skeleton skeleton-text" style="width: 90%"></div>
+                <div class="skeleton skeleton-text" style="width: 70%"></div>
+            </div>
+        `).join('');
+
         try {
             const role = auth.getUserRole();
             const reports = await ReportsService.getReports(role);
@@ -285,7 +322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 await loadUsers();
             } catch (error) {
-                alert(error.message);
+                showToast(error.message || 'Operation failed', 'error');
             } finally {
                 setLoading(btn, false, originalText);
             }
@@ -302,15 +339,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 setLoading(submitBtn, true);
                 await ReportsService.createReport({
-                    contentId: `manual_${Date.now()}`,
-                    contentType: 'manual_report',
-                    reportType: formData.get('title'),
-                    description: formData.get('description')
+                    contentId: formData.get('contentId'),
+                    contentType: formData.get('contentType'),
+                    reportType: formData.get('reportType'),
+                    description: formData.get('description'),
+                    priority: formData.get('priority')
                 });
                 reportForm.reset();
                 await loadReports();
+                showToast('Report created successfully!', 'success');
             } catch (error) {
-                alert(error.message);
+                showToast(error.message || 'Failed to create report', 'error');
             } finally {
                 setLoading(submitBtn, false, 'Create Report');
             }
@@ -320,11 +359,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize Management Workspaces
     if (auth.isModerator() && (usersBody || reportsList)) {
         if (statusEl) statusEl.textContent = 'Initializing workspace...';
-        Promise.all([loadUsers(), loadReports()]).then(() => {
+        Promise.all([loadUsers(), loadReports(), loadProfile()]).then(() => {
             if (statusEl) statusEl.textContent = 'Workspace ready.';
         });
     }
 });
+
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icon = type === 'success' ? '✓' : (type === 'error' ? '!' : 'i');
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">${ValidationUtils.sanitizeHtml(message)}</div>
+        <button class="toast-close" aria-label="Close notification">&times;</button>
+    `;
+
+    container.appendChild(toast);
+
+    const dismiss = () => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 300);
+    };
+
+    // Auto-dismiss
+    const autoDismissTimeout = setTimeout(dismiss, 4000);
+
+    // Manual dismiss
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        clearTimeout(autoDismissTimeout);
+        dismiss();
+    });
+}
 
 function setLoading(button, isLoading, originalText) {
     button.disabled = isLoading;

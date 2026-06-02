@@ -46,6 +46,26 @@
                 <h2>Reports</h2>
                 <div id="reports-list" class="reports-list"></div>
             </article>
+
+            <article class="management-card">
+                <h2>Create Report</h2>
+                <form id="reportForm" class="management-form">
+                    <div class="form-row">
+                        <input type="text" name="contentId" placeholder="Content ID" required class="input-field">
+                        <input type="text" name="contentType" placeholder="Content Type" required class="input-field">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" name="reportType" placeholder="Report Type" required class="input-field">
+                        <select name="priority" required class="input-field">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <textarea name="description" rows="3" placeholder="Description" required class="input-field"></textarea>
+                    <button type="submit" class="call-btn">Create Report</button>
+                </form>
+            </article>
         </section>
 
         <section class="management-card">
