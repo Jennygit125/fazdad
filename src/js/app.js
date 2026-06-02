@@ -280,7 +280,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const role = auth.getUserRole();
-            const reports = await ReportsService.getReports(role);
+            const response = await ReportsService.getReports(role);
+            const reports = response.reports || [];
             reportsList.innerHTML = reports.length ? reports.map(report => `
                 <div class="info-card" style="margin-bottom: 1rem; border-left: 4px solid var(--accent);">
                     <div style="display: flex; justify-content: space-between;">
