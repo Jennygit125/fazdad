@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (isAuthenticated) {
             if (loginNavLink) loginNavLink.style.display = 'none';
-            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-block' : 'none';
-            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-block' : 'none';
+            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-flex' : 'none';
+            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-flex' : 'none';
 
             if (userNavItem) {
                 userNavItem.style.display = 'flex';
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         } else {
-            if (loginNavLink) loginNavLink.style.display = 'inline-block';
+            if (loginNavLink) loginNavLink.style.display = 'inline-flex';
             if (userNavItem) userNavItem.style.display = 'none';
             if (adminNavLink) adminNavLink.style.display = 'none';
             if (moderatorNavLink) moderatorNavLink.style.display = 'none';
@@ -66,7 +66,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (profileBtn && dropdownContent) {
         profileBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            dropdownContent.classList.toggle('show');
+            const isShowing = dropdownContent.classList.toggle('show');
+            // Accessibility: Focus first link if opened
+            if (isShowing) dropdownContent.querySelector('a')?.focus();
         });
 
         // Close dropdown when clicking outside
@@ -205,17 +207,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reportsList = document.getElementById('reports-list');
     const reportForm = document.getElementById('reportForm');
 
-    const loadProfile = () => {
+    const loadProfile = async () => {
         const profileGrid = document.getElementById('profile-grid');
         if (!profileGrid) return;
-        const user = auth.getCurrentUser();
-        if (!user) return;
-        profileGrid.innerHTML = `
-            <div class="profile-item"><strong>First Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.firstName)}</span></div>
-            <div class="profile-item"><strong>Last Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.lastName || '')}</span></div>
-            <div class="profile-item"><strong>Email:</strong> <span>${ValidationUtils.sanitizeHtml(user.email)}</span></div>
-            <div class="profile-item"><strong>Role:</strong> <span class="role-badge">${user.role}</span></div>
-        `;
+        try {
+            const user = auth.getCurrentUser();
+            if (!user) return;
+            profileGrid.innerHTML = `
+                <div class="profile-item"><strong>First Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.firstName)}</span></div>
+                <div class="profile-item"><strong>Last Name:</strong> <span>${ValidationUtils.sanitizeHtml(user.lastName || '')}</span></div>
+                <div class="profile-item"><strong>Email:</strong> <span>${ValidationUtils.sanitizeHtml(user.email)}</span></div>
+                <div class="profile-item"><strong>Role:</strong> <span class="role-badge">${user.role}</span></div>
+            `;
+        } catch (error) {
+            console.error('Profile display failed:', error);
+            profileGrid.innerHTML = '<p class="auth-message error">Failed to display profile info.</p>';
+        }
     };
 
     const loadUsers = async () => {
@@ -234,7 +241,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await UsersService.getAllUsers(); // Returns { users: [...] }
             const users = response.users || [];
-            usersBody.innerHTML = users.map((user, index) => {
+
+            usersBody.innerHTML = users.length ? users.map((user, index) => {
                 const isLocked = user.lockUntil && new Date(user.lockUntil) > new Date();
                 const userId = user.id || user._id;
                 const fName = ValidationUtils.sanitizeHtml(user.firstName || '');
@@ -246,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td>${ValidationUtils.sanitizeHtml(user.email)}</td>
                         <td><span class="role-badge">${user.role}</span></td>
                         <td>
-                            <span class="status-pill ${isLocked ? 'locked' : 'active'}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: ${isLocked ? 'var(--error-bg)' : '#e6fff5'}; color: ${isLocked ? 'var(--error-text)' : '#087a4f'};">${isLocked ? 'Locked' : 'Active'}</span>
+                            <span class="status-pill ${isLocked ? 'locked' : 'active'}">${isLocked ? 'Locked' : 'Active'}</span>
                         </td>
                         <td>
                             <div style="display: flex; gap: 0.5rem;">
@@ -258,14 +266,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         </td>
                     </tr>`;
-            }).join('');
+            }).join('') : '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No users found in the system.</td></tr>';
         } catch (error) {
             const status = error.status || (error.response && error.response.status);
             if (status === 401 || status === 403) {
                 usersBody.innerHTML = `<tr><td colspan="5" class="auth-message error">Access Denied: You do not have permission to view users.</td></tr>`;
             } else {
                 usersBody.innerHTML = `<tr><td colspan="5">
-                    <div class="auth-message error">Failed to load users: ${error.message}</div>
+                    <div class="auth-message error">Connection Error: ${error.message} (Server may be waking up)</div>
                     <button class="call-btn" onclick="location.reload()" style="padding: 5px 15px; font-size: 0.8rem;">Retry Connection</button>
                 </td></tr>`;
             }
@@ -291,13 +299,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await ReportsService.getReports(role);
             const reports = response.reports || [];
             reportsList.innerHTML = reports.length ? reports.map((report, index) => `
-                <div class="info-card fade-in-up" style="margin-bottom: 1rem; border-left: 4px solid var(--accent); animation-delay: ${index * 0.1}s">
+                <div class="info-card fade-in-up" style="margin-bottom: 1rem; border-left: 4px solid var(--accent); animation-delay: ${index * 0.05}s">
                     <div style="display: flex; justify-content: space-between;">
                         <strong>${report.reportType}</strong>
                         <span class="service-tag">${report.priority}</span>
                     </div>
                     <p style="margin: 0.5rem 0;">${report.description}</p>
-                    <small><strong>Target:</strong> ${report.contentType} (${report.contentId})</small>
+                    <small><strong>Target:</strong> ${report.contentType} (${report.contentId}) | <strong>Status:</strong> ${report.status || 'open'}</small>
                 </div>
             `).join('') : '<div class="info-card"><p>No active reports to display.</p></div>';
         } catch (error) {

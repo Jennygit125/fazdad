@@ -112,7 +112,8 @@ const message = await PublicService.getPublicMessage();
 {
     "success": true,
     "userId": "user_id",
-    "username": "username",
+    "firstName": "firstName",
+    "lastName": "lastName",
     "email": "email@example.com",
     "role": "user"
 }

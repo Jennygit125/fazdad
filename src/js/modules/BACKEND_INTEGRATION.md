@@ -112,7 +112,8 @@ const message = await PublicService.getPublicMessage();
 {
     "success": true,
     "userId": "user_id",
-    "username": "username",
+    "firstName": "firstName",
+    "lastName": "lastName",
     "email": "email@example.com",
     "role": "user"
 }
@@ -125,7 +126,8 @@ const message = await PublicService.getPublicMessage();
     "token": "jwt_token_here",
     "user": {
         "id": "user_id",
-        "username": "username",
+        "firstName": "firstName",
+        "lastName": "lastName",
         "email": "email@example.com",
         "role": "user"
     }
