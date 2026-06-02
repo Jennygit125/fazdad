@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (isAuthenticated) {
             if (loginNavLink) loginNavLink.style.display = 'none';
-            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-block' : 'none';
-            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-block' : 'none';
+            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'block' : 'none';
+            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'block' : 'none';
 
             if (userNavItem) {
                 userNavItem.style.display = 'flex';
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         } else {
-            if (loginNavLink) loginNavLink.style.display = 'inline-block';
+            if (loginNavLink) loginNavLink.style.display = 'block';
             if (userNavItem) userNavItem.style.display = 'none';
             if (adminNavLink) adminNavLink.style.display = 'none';
             if (moderatorNavLink) moderatorNavLink.style.display = 'none';
@@ -234,15 +234,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await UsersService.getAllUsers(); // Returns { users: [...] }
             const users = response.users || [];
-            usersBody.innerHTML = users.map(user => {
+            usersBody.innerHTML = users.map((user, index) => {
                 const isLocked = user.lockUntil && new Date(user.lockUntil) > new Date();
                 const userId = user.id || user._id;
                 const fName = ValidationUtils.sanitizeHtml(user.firstName || '');
                 const lName = ValidationUtils.sanitizeHtml(user.lastName || '');
                 
                 return `
-                    <tr>
-                        <td><strong>${fName} ${lName}</strong></td>
+                    <tr class="fade-in-up" style="animation-delay: ${index * 0.05}s">
+                        <td><strong>${fName || 'Unnamed'} ${lName}</strong></td>
                         <td>${ValidationUtils.sanitizeHtml(user.email)}</td>
                         <td><span class="role-badge">${user.role}</span></td>
                         <td>
@@ -260,7 +260,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </tr>`;
             }).join('');
         } catch (error) {
-            usersBody.innerHTML = `<tr><td colspan="5">Error: ${error.message}</td></tr>`;
+            const status = error.status || (error.response && error.response.status);
+            if (status === 401 || status === 403) {
+                usersBody.innerHTML = `<tr><td colspan="5" class="auth-message error">Access Denied: You do not have permission to view users.</td></tr>`;
+            } else {
+                usersBody.innerHTML = `<tr><td colspan="5">
+                    <div class="auth-message error">Failed to load users: ${error.message}</div>
+                    <button class="call-btn" onclick="location.reload()" style="padding: 5px 15px; font-size: 0.8rem;">Retry Connection</button>
+                </td></tr>`;
+            }
         }
     };
 
@@ -282,18 +290,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             const role = auth.getUserRole();
             const response = await ReportsService.getReports(role);
             const reports = response.reports || [];
-            reportsList.innerHTML = reports.length ? reports.map(report => `
-                <div class="info-card" style="margin-bottom: 1rem; border-left: 4px solid var(--accent);">
+            reportsList.innerHTML = reports.length ? reports.map((report, index) => `
+                <div class="info-card fade-in-up" style="margin-bottom: 1rem; border-left: 4px solid var(--accent); animation-delay: ${index * 0.1}s">
                     <div style="display: flex; justify-content: space-between;">
                         <strong>${report.reportType}</strong>
                         <span class="service-tag">${report.priority}</span>
                     </div>
                     <p style="margin: 0.5rem 0;">${report.description}</p>
-                    <small>Status: ${report.status} | ID: ${report.contentId}</small>
+                    <small>Content ID: ${report.contentId} | Type: ${report.contentType}</small>
                 </div>
-            `).join('') : '<p>No reports found.</p>';
+            `).join('') : '<div class="info-card"><p>No active reports to display.</p></div>';
         } catch (error) {
-            reportsList.innerHTML = `<p class="auth-message error">Error: ${error.message}</p>`;
+            const status = error.status || (error.response && error.response.status);
+            if (status === 403) {
+                reportsList.innerHTML = `<div class="auth-message error">You are not authorized to view reports.</div>`;
+            } else {
+                reportsList.innerHTML = `<div class="auth-message error">Network Error: Could not fetch reports.</div>`;
+            }
         }
     };
 
@@ -332,20 +345,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Handle Report Creation
     if (reportForm) {
+        const descField = reportForm.querySelector('textarea[name="description"]');
+        const counterDisplay = reportForm.querySelector('.char-counter span');
+        
+        if (descField && counterDisplay) {
+            descField.addEventListener('input', () => {
+                counterDisplay.textContent = descField.value.length;
+            });
+        }
+
         reportForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(reportForm);
             const submitBtn = reportForm.querySelector('button');
             
+            const reportData = {
+                contentId: formData.get('contentId'),
+                contentType: formData.get('contentType'),
+                reportType: formData.get('reportType'),
+                description: formData.get('description'),
+                priority: formData.get('priority')
+            };
+
+            // Error Resilience: Validate ID format (expecting MongoDB ObjectId)
+            if (reportData.contentId.length < 12) {
+                return showToast('Invalid Content ID. Please check the source.', 'error');
+            }
+            
             try {
                 setLoading(submitBtn, true);
-                await ReportsService.createReport({
-                    contentId: formData.get('contentId'),
-                    contentType: formData.get('contentType'),
-                    reportType: formData.get('reportType'),
-                    description: formData.get('description'),
-                    priority: formData.get('priority')
-                });
+                await ReportsService.createReport(reportData);
                 reportForm.reset();
                 await loadReports();
                 showToast('Report created successfully!', 'success');

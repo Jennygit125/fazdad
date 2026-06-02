@@ -82,11 +82,11 @@ const reports = await ReportsService.getAdminReports();
 
 // Create report (moderator only)
 await ReportsService.createReport({
-    contentId: '',
-    contentType: 'comment',
-    reportType: 'harassment',
-    description: '',
-    priority: ''
+    "contentId": "64b1f8e5c4a92a11b8ef0921",
+    "contentType": "comment",
+    "reportType": "harassment",
+    "description": "Only moderators can create a report.",
+    "priority": "high"
 });
 
 // Auto-choose endpoint based on role
@@ -214,7 +214,7 @@ async function handleLogin(username, password) {
     try {
         const result = await auth.login(username, password);
         
-        console.log('Welcome,', result.user.username);
+        console.log('Welcome,', result.user.firstName);
         console.log('Your role:', result.role);
         
         // Redirect based on role

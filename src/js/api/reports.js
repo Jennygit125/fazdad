@@ -38,13 +38,20 @@ class ReportsService {
      * Create a new report
      * Moderator only
      */
-    static async createReport({ contentId, contentType, reportType, description, priority }) {
+    static async createReport(data) {
+        const { contentId, contentType, reportType, description, priority } = data;
+        
+        // Data Integrity Check
+        if (!contentId || !contentType || !reportType || !description) {
+            throw new Error('All report fields are required');
+        }
+
         const payload = {
-            contentId,
-            contentType,
-            reportType,
-            description,
-            priority: priority || 'medium'
+            contentId: String(contentId).trim(),
+            contentType: String(contentType).trim(),
+            reportType: String(reportType).trim(),
+            description: String(description).trim(),
+            priority: ['low', 'medium', 'high'].includes(priority) ? priority : 'medium'
         };
 
         try {
