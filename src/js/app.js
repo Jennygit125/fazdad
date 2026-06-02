@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="service-tag">${report.priority}</span>
                     </div>
                     <p style="margin: 0.5rem 0;">${report.description}</p>
-                    <small>Content ID: ${report.contentId} | Type: ${report.contentType}</small>
+                    <small><strong>Target:</strong> ${report.contentType} (${report.contentId})</small>
                 </div>
             `).join('') : '<div class="info-card"><p>No active reports to display.</p></div>';
         } catch (error) {

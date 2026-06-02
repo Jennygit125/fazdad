@@ -82,11 +82,11 @@ const reports = await ReportsService.getAdminReports();
 
 // Create report (moderator only)
 await ReportsService.createReport({
-    "contentId": "64b1f8e5c4a92a11b8ef0921",
-    "contentType": "comment",
-    "reportType": "harassment",
-    "description": "Only moderators can create a report.",
-    "priority": "high"
+    contentId: "64b1f8e5c4a92a11b8ef0921",
+    contentType: "comment", // post, comment, user, other
+    reportType: "harassment", // spam, abuse, harassment, misinformation, other
+    description: "Only moderators can create a report.",
+    priority: "high"
 });
 
 // Auto-choose endpoint based on role

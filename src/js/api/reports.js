@@ -46,12 +46,16 @@ class ReportsService {
             throw new Error('All report fields are required');
         }
 
+        const validContentTypes = ["post", "comment", "user", "other"];
+        const validReportTypes = ["spam", "abuse", "harassment", "misinformation", "other"];
+        const validPriorities = ["low", "medium", "high"];
+
         const payload = {
             contentId: String(contentId).trim(),
-            contentType: String(contentType).trim(),
-            reportType: String(reportType).trim(),
+            contentType: validContentTypes.includes(contentType) ? contentType : "other",
+            reportType: validReportTypes.includes(reportType) ? reportType : "other",
             description: String(description).trim(),
-            priority: ['low', 'medium', 'high'].includes(priority) ? priority : 'medium'
+            priority: validPriorities.includes(priority) ? priority : "medium"
         };
 
         try {

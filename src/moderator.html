@@ -47,10 +47,23 @@
                 <form id="reportForm" class="management-form">
                     <div class="form-row">
                         <input type="text" name="contentId" placeholder="Content ID" required class="input-field">
-                        <input type="text" name="contentType" placeholder="Content Type" required class="input-field">
+                        <select name="contentType" required class="input-field">
+                            <option value="" disabled selected>Content Type</option>
+                            <option value="post">Post</option>
+                            <option value="comment">Comment</option>
+                            <option value="user">User</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
                     <div class="form-row">
-                        <input type="text" name="reportType" placeholder="Report Type" required class="input-field">
+                        <select name="reportType" required class="input-field">
+                            <option value="" disabled selected>Report Reason</option>
+                            <option value="spam">Spam</option>
+                            <option value="abuse">Abuse</option>
+                            <option value="harassment">Harassment</option>
+                            <option value="misinformation">Misinformation</option>
+                            <option value="other">Other</option>
+                        </select>
                         <select name="priority" required class="input-field">
                             <option value="low">Low</option>
                             <option value="medium" selected>Medium</option>
