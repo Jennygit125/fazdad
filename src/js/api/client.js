@@ -8,7 +8,7 @@ class ApiClient {
     constructor() {
         try {
             // Prioritize Webpack-injected environment variable for Vercel compatibility
-            const rawUrl = process.env.API_BASE_URL || 'https://first-auth.onrender.com/api';
+            const rawUrl = process.env.API_BASE_URL;
             // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
             this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
             // Increase timeout to 60s to handle Render's free tier "cold starts"
