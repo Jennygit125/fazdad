@@ -34,8 +34,8 @@ class ApiClient {
                 }
             };
             
-            console.log('[API_CLIENT] Successfully initialized with baseUrl:', this.baseUrl);
-            console.log('[API_CLIENT] Endpoints loaded:', !!this.endpoints, 'AUTH:', !!this.endpoints?.AUTH);
+            console.log('[API_CLIENT] Successfully initialized with baseUrl',);
+            console.log('[API_CLIENT] Endpoints loaded');
         } catch (error) {
             console.error('[API_CLIENT] Constructor error:', error);
             throw error;
