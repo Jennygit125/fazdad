@@ -5,6 +5,8 @@
  * Copy this pattern for other resources (users, tracking, etc.)
  */
 
+const Logger = require('../utils/logger');
+
 const apiClient = require('../api/client');
 
 class ShipmentService {
@@ -20,8 +22,7 @@ class ShipmentService {
                 : baseEndpoint;
             
             return await apiClient.get(url);
-        } catch (error) {
-            console.error('Failed to fetch shipments:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -35,9 +36,8 @@ class ShipmentService {
         try {
             const template = apiClient.endpoints?.SHIPMENTS?.GET || '/shipments/:id';
             const url = template.replace(':id', id);
-            return await apiClient.get(url);
+            return await apiClient.get(url); // Error already logged in apiClient
         } catch (error) {
-            console.error(`Failed to fetch shipment ${id}:`, error);
             throw error;
         }
     }
@@ -54,8 +54,7 @@ class ShipmentService {
                 endpoint,
                 shipmentData
             );
-        } catch (error) {
-            console.error('Failed to create shipment:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -70,9 +69,8 @@ class ShipmentService {
         try {
             const template = apiClient.endpoints?.SHIPMENTS?.UPDATE || '/shipments/:id';
             const url = template.replace(':id', id);
-            return await apiClient.put(url, shipmentData);
+            return await apiClient.put(url, shipmentData); // Error already logged in apiClient
         } catch (error) {
-            console.error(`Failed to update shipment ${id}:`, error);
             throw error;
         }
     }
@@ -86,9 +84,8 @@ class ShipmentService {
         try {
             const template = apiClient.endpoints?.SHIPMENTS?.DELETE || '/shipments/:id';
             const url = template.replace(':id', id);
-            return await apiClient.delete(url);
+            return await apiClient.delete(url); // Error already logged in apiClient
         } catch (error) {
-            console.error(`Failed to delete shipment ${id}:`, error);
             throw error;
         }
     }
@@ -102,9 +99,8 @@ class ShipmentService {
         try {
             const template = apiClient.endpoints?.SHIPMENTS?.TRACK || '/shipments/:id/track';
             const url = template.replace(':id', id);
-            return await apiClient.get(url);
+            return await apiClient.get(url); // Error already logged in apiClient
         } catch (error) {
-            console.error(`Failed to track shipment ${id}:`, error);
             throw error;
         }
     }

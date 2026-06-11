@@ -3,6 +3,8 @@
  * Handles all report-related API calls
  */
 
+const Logger = require('../utils/logger');
+const { ROLES } = require('../utils/constants');
 const apiClient = require('./client');
 
 class ReportsService {
@@ -14,8 +16,7 @@ class ReportsService {
         try {
             const endpoint = apiClient.endpoints?.REPORTS?.GET_MODERATOR || '/moderator/reports';
             return await apiClient.get(endpoint);
-        } catch (error) {
-            console.error('Failed to fetch moderator reports:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -28,8 +29,7 @@ class ReportsService {
         try {
             const endpoint = apiClient.endpoints?.REPORTS?.GET_ADMIN || '/admin/reports';
             return await apiClient.get(endpoint);
-        } catch (error) {
-            console.error('Failed to fetch admin reports:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -39,7 +39,7 @@ class ReportsService {
      * Moderator only
      */
     static async createReport(data) {
-        const { contentId, contentType, reportType, description, priority } = data;
+        const { contentId, contentType, reportType, description, priority } = data || {};
         
         // Data Integrity Check
         if (!contentId || !contentType || !reportType || !description) {
@@ -61,8 +61,7 @@ class ReportsService {
         try {
             const endpoint = apiClient.endpoints?.REPORTS?.CREATE || '/moderator/reports';
             return await apiClient.post(endpoint, payload);
-        } catch (error) {
-            console.error('Failed to create report:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -72,9 +71,9 @@ class ReportsService {
      * Automatically chooses the correct endpoint
      */
     static async getReports(userRole) {
-        if (userRole === 'admin') {
+        if (userRole === ROLES.ADMIN) {
             return this.getAdminReports();
-        } else if (userRole === 'moderator') {
+        } else if (userRole === ROLES.MODERATOR) {
             return this.getModeratorReports();
         } else {
             throw new Error('Insufficient permissions to view reports');

@@ -2,10 +2,11 @@
  * Authentication Module
  * Handles user authentication and session management
  */
-
 const apiClient = require('../api/client');
 const { StorageManager } = require('../utils/storage');
 const ValidationUtils = require('../utils/validation');
+const Logger = require('../utils/logger');
+const { ROLES } = require('../utils/constants');
 
 class AuthModule {
     constructor() {
@@ -13,6 +14,9 @@ class AuthModule {
         this.isAuthenticated = false;
         this.userRole = null;
         this.listeners = [];
+
+        // Register refresh handler with the API client
+        apiClient.setRefreshHandler(() => this.refreshSession());
     }
 
     /**
@@ -82,28 +86,9 @@ class AuthModule {
         }
 
         try {
-            // Call backend signUp endpoint with EXTREME defensive checks
-            console.log('[AUTH] Register called, apiClient status:', {
-                exists: !!apiClient,
-                hasEndpoints: !!(apiClient && apiClient.endpoints),
-                hasAuth: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH),
-                hasSIGN_UP: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH && apiClient.endpoints.AUTH.SIGN_UP),
-                baseUrl: apiClient?.baseUrl
-            });
-            
-            // Explicit null checks
-            if (!apiClient) {
-                throw new Error('API Client not initialized');
-            }
-            if (!apiClient.endpoints) {
-                throw new Error('API Client endpoints not defined');
-            }
-            if (!apiClient.endpoints.AUTH) {
-                throw new Error('AUTH endpoints not defined');
-            }
-            
+            // apiClient is a singleton, guaranteed to be initialized
             const endpoint = apiClient.endpoints.AUTH.SIGN_UP || '/signUp';
-            console.log(`Attempting registration at: ${apiClient.baseUrl}${endpoint}`);
+            Logger.debug(`Attempting registration at: ${apiClient.baseUrl}${endpoint}`);
             const response = await apiClient.post(endpoint, {
                 firstName,
                 lastName,
@@ -116,11 +101,11 @@ class AuthModule {
                 user: response.user || {
                     id: response.userId || response.id || response._id,
                     email: response.email || email,
-                    role: response.role || 'user',
+                    role: response.role || ROLES.USER,
                 },
             };
         } catch (error) {
-            console.error('Registration failed:', error);
+            Logger.error('Registration failed', error, { email });
             throw error;
         }
     }
@@ -134,32 +119,14 @@ class AuthModule {
         }
 
         try {
-            // Call backend signIn endpoint with defensive checks
-            console.log('[AUTH] Login called, apiClient status:', {
-                exists: !!apiClient,
-                hasEndpoints: !!(apiClient && apiClient.endpoints),
-                hasAuth: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH),
-                hasSIGN_IN: !!(apiClient && apiClient.endpoints && apiClient.endpoints.AUTH && apiClient.endpoints.AUTH.SIGN_IN),
-                baseUrl: apiClient?.baseUrl
-            });
-            
-            if (!apiClient) {
-                throw new Error('API Client not initialized');
-            }
-            if (!apiClient.endpoints) {
-                throw new Error('API Client endpoints not defined');
-            }
-            if (!apiClient.endpoints.AUTH) {
-                throw new Error('AUTH endpoints not defined');
-            }
-            
+            // apiClient is a singleton, guaranteed to be initialized
             const endpoint = apiClient.endpoints.AUTH.SIGN_IN || '/signIn';
             const response = await apiClient.post(endpoint, {
                 email: email.toLowerCase(),
                 password,
             });
 
-            const { token, user: userData } = response;
+            const { token, refreshToken, user: userData } = response;
 
             if (!userData) {
                 throw new Error('User data missing from server response');
@@ -175,13 +142,14 @@ class AuthModule {
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
-                role: userData.role || 'user',
+                role: userData.role || ROLES.USER,
                 displayName: userData.displayName || `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.email
             };
 
             // Create session
             const session = {
                 token,
+                refreshToken,
                 user,
                 role: user.role,
                 loginTime: new Date().toISOString(),
@@ -199,7 +167,7 @@ class AuthModule {
                 role: user.role,
             };
         } catch (error) {
-            console.error('Login failed:', error);
+            Logger.error('Login failed', error, { email });
             this.isAuthenticated = false;
             this.currentUser = null;
             this.userRole = null;
@@ -223,7 +191,7 @@ class AuthModule {
 
             return { success: true };
         } catch (error) {
-            console.error('Logout failed:', error);
+            Logger.error('Logout failed', error);
             // Clear local session even if backend call fails
             StorageManager.clearSession();
             this.isAuthenticated = false;
@@ -231,6 +199,47 @@ class AuthModule {
             this.userRole = null;
             this.notifyListeners();
             throw error;
+        }
+    }
+
+    /**
+     * Attempt to refresh the session using a refresh token
+     */
+    async refreshSession() {
+        const session = StorageManager.getSession();
+        if (!session || !session.refreshToken) {
+            return false;
+        }
+
+        try {
+            const endpoint = apiClient.endpoints?.AUTH?.REFRESH || '/refresh';
+            // Use _retry: true to prevent infinite refresh loops if the refresh call itself is 401
+            const response = await apiClient.post(endpoint, {
+                refreshToken: session.refreshToken
+            }, { _retry: true });
+
+            const { token, refreshToken: newRefreshToken } = response;
+
+            if (!token) throw new Error('Refresh failed');
+
+            const updatedSession = {
+                ...session,
+                token,
+                refreshToken: newRefreshToken || session.refreshToken,
+                loginTime: new Date().toISOString()
+            };
+
+            StorageManager.saveSession(updatedSession);
+            this.isAuthenticated = true;
+            this.currentUser = updatedSession.user;
+            this.userRole = updatedSession.role;
+            this.notifyListeners();
+
+            return true;
+        } catch (error) {
+            Logger.error('Session refresh failed', error);
+            await this.logout();
+            return false;
         }
     }
 
@@ -269,14 +278,14 @@ class AuthModule {
      * Check if user has admin role
      */
     isAdmin() {
-        return this.userRole === 'admin';
+        return this.userRole === ROLES.ADMIN;
     }
 
     /**
      * Check if user has moderator role
      */
     isModerator() {
-        return this.userRole === 'moderator' || this.userRole === 'admin';
+        return this.userRole === ROLES.MODERATOR || this.userRole === ROLES.ADMIN;
     }
 }
 

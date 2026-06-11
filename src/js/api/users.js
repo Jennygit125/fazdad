@@ -3,6 +3,8 @@
  * Handles all user-related API calls
  */
 
+const Logger = require('../utils/logger');
+
 const apiClient = require('./client');
 
 class UsersService {
@@ -13,8 +15,7 @@ class UsersService {
         try {
             const endpoint = apiClient.endpoints?.USERS?.PROFILE || '/user/profile';
             return await apiClient.get(endpoint);
-        } catch (error) {
-            console.error('Failed to fetch user profile:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -26,8 +27,7 @@ class UsersService {
         try {
             const endpoint = apiClient.endpoints?.USERS?.GET_ALL || '/admin/getAllUsers';
             return await apiClient.get(endpoint);
-        } catch (error) {
-            console.error('Failed to fetch all users:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -42,8 +42,7 @@ class UsersService {
             const template = apiClient.endpoints?.USERS?.DELETE || '/admin/user/:id';
             const url = template.replace(':id', userId);
             return await apiClient.delete(url);
-        } catch (error) {
-            console.error(`Failed to delete user ${userId}:`, error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -63,8 +62,7 @@ class UsersService {
             const body = duration ? { duration } : {}; 
             
             return await apiClient.post(url, body);
-        } catch (error) {
-            console.error(`Failed to lock user ${userId}:`, error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
@@ -79,8 +77,7 @@ class UsersService {
             const template = apiClient.endpoints?.USERS?.PROMOTE || '/admin/promote/:id';
             const url = template.replace(':id', userId);
             return await apiClient.post(url, {});
-        } catch (error) {
-            console.error(`Failed to promote user ${userId}:`, error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }

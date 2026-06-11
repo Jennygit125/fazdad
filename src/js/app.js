@@ -1,9 +1,22 @@
 const auth = require('./modules/auth');
 const UsersService = require('./api/users');
 const ReportsService = require('./api/reports');
+const Logger = require('./utils/logger');
+const { ROLES } = require('./utils/constants');
 const ValidationUtils = require('./utils/validation');
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Production Safety: Catch unhandled promise rejections globally
+    window.addEventListener('unhandledrejection', (event) => {
+        Logger.error('Unhandled Promise Rejection', event.reason);
+        if (process.env.NODE_ENV === 'production') {
+            event.preventDefault(); // Prevent cluttering the console if we've logged it
+        }
+    });
+
+    // Store cleanup functions for any subscriptions to prevent memory leaks
+    const activeSubscriptions = [];
+
     // Show a subtle loading state if the backend is waking up
     const statusEl = document.getElementById('management-status');
     if (statusEl) statusEl.textContent = 'Connecting to secure server...';
@@ -13,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await auth.initialize();
 
     // Clear "Connecting" status for regular users if workspace logic isn't triggered
-    if (!auth.isModerator() && statusEl) {
+    if (!auth.isModerator() && statusEl && statusEl.textContent === 'Connecting to secure server...') {
         statusEl.textContent = '';
     }
 
@@ -35,9 +48,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const user = auth.getCurrentUser();
 
         if (isAuthenticated) {
-            if (loginNavLink) loginNavLink.style.display = 'none';
-            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-flex' : 'none';
-            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-flex' : 'none';
+            if (loginNavLink) loginNavLink.style.display = 'none'; // Hide login link
+            if (adminNavLink) adminNavLink.style.display = auth.isAdmin() ? 'inline-flex' : 'none'; // Show admin link if admin
+            if (moderatorNavLink) moderatorNavLink.style.display = auth.isModerator() ? 'inline-flex' : 'none'; // Show moderator link if moderator or admin
 
             if (userNavItem) {
                 userNavItem.style.display = 'flex';
@@ -57,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     updateNavUI();
-    auth.subscribe(updateNavUI);
+    activeSubscriptions.push(auth.subscribe(updateNavUI));
 
     // Profile Dropdown Toggle Logic
     const profileBtn = document.querySelector('.dropbtn');
@@ -126,13 +139,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     window.location.href = '/index';
                 }
             } catch (error) {
-                const status = error.status || (error.response && error.response.status);
-                if (status === 403) {
+                Logger.error('Login failed', error, { email: data.email });
+                if (error.status === 403) {
                     showAuthError('Security Lock: Account is temporarily locked.');
-                } else if (status === 401) {
+                } else if (error.status === 401) {
                     showAuthError('Invalid email or password.');
                 } else {
-                    showAuthError(error.message || 'Login failed');
+                    showAuthError(error.message || 'An unexpected error occurred during login.');
                 }
             } finally {
                 setLoading(submitBtn, false, originalText);
@@ -168,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     loginBtn.click();
                 }
             } catch (error) {
-                showAuthError(error.message || 'Registration failed');
+                Logger.error('Registration failed', error, { email: data.email });
             } finally {
                 setLoading(submitBtn, false, originalText);
             }
@@ -220,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="profile-item"><strong>Role:</strong> <span class="role-badge">${user.role}</span></div>
             `;
         } catch (error) {
-            console.error('Profile display failed:', error);
+            Logger.error('Profile display failed', error);
             profileGrid.innerHTML = '<p class="auth-message error">Failed to display profile info.</p>';
         }
     };
@@ -259,7 +272,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td>
                             <div style="display: flex; gap: 0.5rem;">
                                 <button class="call-btn action-btn" style="padding: 5px 10px; font-size: 0.7rem; margin: 0;" data-id="${userId}" data-action="lock">Lock</button>
-                                ${auth.isAdmin() && user.role !== 'admin' ? `
+                                ${auth.isAdmin() && user.role !== ROLES.ADMIN ? `
                                     <button class="call-btn action-btn" style="padding: 5px 10px; font-size: 0.7rem; margin: 0;" data-id="${userId}" data-action="promote">Promote</button>
                                     <button class="call-btn action-btn" style="padding: 5px 10px; font-size: 0.7rem; margin: 0; background: var(--error-text);" data-id="${userId}" data-action="delete">Delete</button>
                                 ` : ''}
@@ -268,12 +281,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </tr>`;
             }).join('') : '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No users found in the system.</td></tr>';
         } catch (error) {
-            const status = error.status || (error.response && error.response.status);
-            if (status === 401 || status === 403) {
+            Logger.error('Failed to load users', error);
+            if (error.status === 401 || error.status === 403) {
                 usersBody.innerHTML = `<tr><td colspan="5" class="auth-message error">Access Denied: You do not have permission to view users.</td></tr>`;
             } else {
                 usersBody.innerHTML = `<tr><td colspan="5">
-                    <div class="auth-message error">Connection Error: ${error.message} (Server may be waking up)</div>
+                    <div class="auth-message error">Connection Error: ${error.message || 'An unexpected error occurred'} (Server may be waking up)</div>
                     <button class="call-btn" onclick="location.reload()" style="padding: 5px 15px; font-size: 0.8rem;">Retry Connection</button>
                 </td></tr>`;
             }
@@ -309,8 +322,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `).join('') : '<div class="info-card"><p>No active reports to display.</p></div>';
         } catch (error) {
-            const status = error.status || (error.response && error.response.status);
-            if (status === 403) {
+            Logger.error('Failed to load reports', error);
+            if (error.status === 403) {
                 reportsList.innerHTML = `<div class="auth-message error">You are not authorized to view reports.</div>`;
             } else {
                 reportsList.innerHTML = `
@@ -335,16 +348,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 setLoading(btn, true);
                 if (action === 'lock') {
                     let duration = null;
-                    if (auth.isAdmin()) {
-                        const input = prompt('Minutes to lock (e.g. 1440 for 1 day, or leave blank):');
-                        if (input === null) return; // User cancelled
-                        
-                        const minutes = input.trim();
-                        if (minutes !== '' && (isNaN(minutes) || parseInt(minutes) <= 0)) {
-                            showToast('Please enter a valid positive number of minutes.', 'error');
+                    if (auth.isAdmin()) { // Only admin can specify duration
+                        // TODO: Replace with a custom modal for better UX and validation
+                        // For now, a simple prompt:
+                        const input = window.prompt('Enter lock duration in minutes (e.g., 1440 for 1 day). Leave blank for default (1 day for moderator, indefinite for admin):');
+                        if (input === null) { // User cancelled
+                            setLoading(btn, false, originalText);
                             return;
                         }
-                        duration = minutes || null;
+                        const parsedDuration = parseInt(input.trim(), 10);
+                        if (input.trim() !== '' && (isNaN(parsedDuration) || parsedDuration <= 0)) {
+                            return showToast('Invalid duration. Please enter a positive number or leave blank.', 'error');
+                        }
+                        duration = input.trim() === '' ? null : parsedDuration;
                     }
                     await UsersService.lockUser(id, duration);
                 } else if (action === 'promote') {
@@ -354,7 +370,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 await loadUsers();
             } catch (error) {
-                showToast(error.message || 'Operation failed', 'error');
+                Logger.error(`User action (${action}) failed for ID: ${id}`, error);
             } finally {
                 setLoading(btn, false, originalText);
             }
@@ -401,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 reportForm.reset();
                 await loadReports();
                 showToast('Report created successfully!', 'success');
-            } catch (error) {
+            } catch (error) { // Error already logged in ReportsService
                 showToast(error.message || 'Failed to create report', 'error');
             } finally {
                 setLoading(submitBtn, false, 'Create Report');
@@ -416,6 +432,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (statusEl) statusEl.textContent = 'Workspace ready.';
         });
     }
+
+    // If your app ever implements page transitions or "unmounting"
+    window.addEventListener('unload', () => {
+        activeSubscriptions.forEach(unsubscribe => unsubscribe());
+        activeSubscriptions.length = 0;
+    });
 });
 
 function showToast(message, type = 'success') {

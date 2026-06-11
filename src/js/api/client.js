@@ -1,24 +1,31 @@
 /**
  * API Client
  * Handles all HTTP communication with the backend
+ *
  * Standalone module with hardcoded defaults - no external config dependency
  */
+
+const Logger = require('../utils/logger');
 
 class ApiClient {
     constructor() {
         try {
             // Prioritize Webpack-injected environment variable for Vercel compatibility
-            const rawUrl = process.env.API_BASE_URL;
+            const rawUrl = process.env.API_BASE_URL || '';
             // Ensure the URL doesn't end with a slash to prevent double-slashes in requests
-            this.baseUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
+            this.baseUrl = rawUrl && rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
             // Increase timeout to 60s to handle Render's free tier "cold starts"
             this.timeout = 60000;
             
+            this.refreshHandler = null;
+            this.refreshPromise = null;
+
             // Hardcoded endpoints - no external config file needed
             this.endpoints = {
                 AUTH: {
                     SIGN_IN: '/signIn',
                     SIGN_UP: '/signUp',
+                    REFRESH: '/refresh',
                 },
                 USERS: {
                     PROFILE: '/user/profile',
@@ -34,10 +41,11 @@ class ApiClient {
                 }
             };
             
-            console.log('[API_CLIENT] Successfully initialized with baseUrl',);
+            console.log('[API_CLIENT] Successfully initialized with baseUrl');
             console.log('[API_CLIENT] Endpoints loaded');
-        } catch (error) {
-            console.error('[API_CLIENT] Constructor error:', error);
+            Logger.info('[API_CLIENT] Successfully initialized', { baseUrl: "i won't tell you this "});
+        } catch (error) { // Catching errors during constructor is unusual, usually indicates a fatal setup issue.
+            console.error('[API_CLIENT] Fatal Constructor error:', error);
             throw error;
         }
     }
@@ -81,6 +89,7 @@ class ApiClient {
             body = null,
             customHeaders = {},
             timeout = this.timeout,
+            _retry = false,
         } = options;
 
         const url = `${this.baseUrl}${endpoint}`;
@@ -99,6 +108,19 @@ class ApiClient {
         try {
             const response = await fetch(url, requestInit);
 
+            // Handle 401 Unauthorized for token refresh
+            if (response.status === 401 && !_retry && this.refreshHandler) {
+                if (!this.refreshPromise) {
+                    this.refreshPromise = this.refreshHandler().finally(() => {
+                        this.refreshPromise = null;
+                    });
+                }
+                const refreshed = await this.refreshPromise;
+                if (refreshed) {
+                    return await this.request(endpoint, { ...options, _retry: true });
+                }
+            }
+
             if (!response.ok) {
                 const error = await this.handleErrorResponse(response);
                 throw error;
@@ -106,7 +128,7 @@ class ApiClient {
 
             return await response.json();
         } catch (error) {
-            console.error(`API Error [${method} ${endpoint}]:`, error);
+            Logger.error(`API Request Failed [${method} ${endpoint}]`, error);
             // Specific handling for CORS or Network failures which fetch() reports as TypeError
             if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
                 throw new Error('Connection failed. This is likely a CORS security block or the server is waking up from sleep.');
@@ -167,6 +189,13 @@ class ApiClient {
      */
     patch(endpoint, body, options = {}) {
         return this.request(endpoint, { ...options, method: 'PATCH', body });
+    }
+
+    /**
+     * Register a callback for 401 errors
+     */
+    setRefreshHandler(handler) {
+        this.refreshHandler = handler;
     }
 }
 

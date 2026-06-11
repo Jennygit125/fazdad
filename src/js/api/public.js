@@ -3,6 +3,8 @@
  * Handles public API calls that don't require authentication
  */
 
+const Logger = require('../utils/logger');
+
 const apiClient = require('./client');
 
 class PublicService {
@@ -14,8 +16,7 @@ class PublicService {
         try {
             const endpoint = apiClient.endpoints?.AUTH?.PUBLIC_MESSAGE || '/public/message';
             return await apiClient.get(endpoint);
-        } catch (error) {
-            console.error('Failed to fetch public message:', error);
+        } catch (error) { // Error already logged in apiClient
             throw error;
         }
     }
